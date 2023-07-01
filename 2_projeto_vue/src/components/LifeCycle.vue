@@ -12,9 +12,15 @@
         },
         created(){
             this.name='Eduardo'
+            this.lifeCycle()
         },
         mounted(){
             this.name='Lia'
+        },
+        methods:{
+            lifeCycle(){
+                console.log('Executed')
+            }
         }
     }
 </script>
