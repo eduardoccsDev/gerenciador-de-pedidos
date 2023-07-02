@@ -3,12 +3,14 @@
         <li><a href="#">Home</a></li>
         <li><a href="#">Projetos</a></li>
         <li><a href="#">Contato</a></li>
+        <li v-if="estaLogado"><a href="#">Meu Perfil</a></li>
     </ul>
 </template>
 
 <script>
     export default{
-        name:'Header'
+        name:'Header',
+        props: ['estaLogado']
     }
 </script>
 
@@ -30,4 +32,4 @@
     a:hover{
         color: aquamarine;
     }
-</style>
+</style> 

@@ -37,11 +37,13 @@
             components:{
                 Picture
             },
+            props:{
+                email: String,
+                estaTrabalhando: Boolean
+            },
             data(){
                 return{
-                    estaTrabalhando: false,
                     mostrarEmail: false,
-                    email: 'eduardoc.info@gmail.com',
                     meuLink: 'https://google.com',
                     textBtn: 'Mostrar E-mail',
                     backendTech:['JavaScript','PHP','Python'],
