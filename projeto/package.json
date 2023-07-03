@@ -10,6 +10,7 @@
     "backend": "json-server --watch db/db.json"
   },
   "dependencies": {
+    "bootstrap": "^5.3.0",
     "json-server": "^0.17.3",
     "vue": "^3.2.47",
     "vue-router": "^4.2.2"

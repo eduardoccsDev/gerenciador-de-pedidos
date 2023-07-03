@@ -116,6 +116,22 @@
       ],
       "status": "Solicitado",
       "id": 3
+    },
+    {
+      "nome": "teste de celular",
+      "telefone": "(85) 98921-3582",
+      "carne": "Maminha",
+      "pao": "3 Queijos",
+      "opcionais": [
+        "Bacon",
+        "Salame",
+        "Cebola roxa",
+        "Pepino",
+        "Tomate",
+        "Cheddar"
+      ],
+      "status": "Solicitado",
+      "id": 4
     }
   ]
 }

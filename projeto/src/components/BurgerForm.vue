@@ -3,9 +3,15 @@
     <Message :msg="msg" v-show="msg"/>
     <div>
         <form id="burgerForm" @submit="createBurger">
-            <div class="inputContainer">
-                <label for="nome"><i class="fa-solid fa-user"></i> Nome do cliente:</label>
-                <input type="text" id="nome" name="nome" v-model="nome" placeholder="Digite o seu nome">
+            <div class="row">
+                <div class="inputContainer col">
+                    <label for="nome"><i class="fa-solid fa-user"></i> Seu nome:</label>
+                    <input type="text" id="nome" name="nome" v-model="nome" placeholder="Digite o seu nome">
+                </div>
+                <div class="inputContainer col">
+                    <label for="telefone"><i class="fa-solid fa-phone"></i> Seu telefone:</label>
+                    <input type="text" id="telefone" name="telefone" v-model="telefone" placeholder="Digite o seu telefone">
+                </div>
             </div>
             <div class="inputContainer">
                 <label for="pao"><i class="fa-solid fa-bread-slice"></i> Escolha o pão:</label>
@@ -59,6 +65,7 @@ export default {
             carnes: null,
             opcionaisdata: null,
             nome: null,
+            telefone: null,
             pao: null,
             carne: null,
             opcionais: [],
@@ -78,6 +85,7 @@ export default {
             e.preventDefault();
             const data={
                 nome: this.nome,
+                telefone: this.telefone,
                 carne: this.carne,
                 pao: this.pao,
                 opcionais: Array.from(this.opcionais),
@@ -99,6 +107,7 @@ export default {
 
             //Limpar campos após envio
             this.nome="";
+            this.telefone="";
             this.carne="";
             this.pao="";
             this.opcionais="";
@@ -123,10 +132,9 @@ export default {
     }
     label{
         font-weight: bold;
-        margin-bottom: 15px;
+        margin-bottom: 18px;
         color: #222;
-        padding: .5em 1em;
-        border-left: 4px solid #FEB711;
+        padding: .5em .5em;
     }
     input[type=text], select{
         padding: .5em 1em;
@@ -140,6 +148,14 @@ export default {
     input[type=text]:focus, select:focus{
         border: 1px solid #FEB711;
         outline: none;
+    }
+    i{
+        background-color: #ffb711;
+        padding: .3em 6px;
+        border-radius: 100%;
+    }
+    .fa-share{
+        color: #222;
     }
     #opcionaisContainer{
         flex-direction: row;
