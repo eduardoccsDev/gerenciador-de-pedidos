@@ -36,6 +36,20 @@
         "tipo": "Veggie burger"
       }
     ],
+    "pontocarnes": [
+      {
+        "id": 1,
+        "tipo": "Ao ponto"
+      },
+      {
+        "id": 2,
+        "tipo": "Bem passada"
+      },
+      {
+        "id": 3,
+        "tipo": "Mal passada"
+      }
+    ],
     "opcionais": [
       {
         "id": 1,
@@ -78,60 +92,6 @@
     }
   ],
   "burgers": [
-    {
-      "nome": "Fulano",
-      "carne": "Veggie burger",
-      "pao": "3 Queijos",
-      "opcionais": [
-        "Cebola roxa",
-        "Tomate",
-        "Pepino"
-      ],
-      "status": "Solicitado",
-      "id": 1
-    },
-    {
-      "nome": "teste",
-      "carne": "Picanha",
-      "pao": "3 Queijos",
-      "opcionais": [
-        "Bacon",
-        "Salame",
-        "Cebola roxa",
-        "Pepino",
-        "Tomate",
-        "Cheddar"
-      ],
-      "status": "Solicitado",
-      "id": 2
-    },
-    {
-      "nome": "teste 2",
-      "carne": "Veggie burger",
-      "pao": "Integral",
-      "opcionais": [
-        "Cebola roxa",
-        "Tomate",
-        "Pepino"
-      ],
-      "status": "Solicitado",
-      "id": 3
-    },
-    {
-      "nome": "teste de celular",
-      "telefone": "(85) 98921-3582",
-      "carne": "Maminha",
-      "pao": "3 Queijos",
-      "opcionais": [
-        "Bacon",
-        "Salame",
-        "Cebola roxa",
-        "Pepino",
-        "Tomate",
-        "Cheddar"
-      ],
-      "status": "Solicitado",
-      "id": 4
-    }
+    
   ]
 }

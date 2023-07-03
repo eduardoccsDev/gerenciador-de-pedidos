@@ -6,17 +6,17 @@
             <div class="row">
                 <div class="inputContainer col">
                     <label for="nome"><i class="fa-solid fa-user"></i> Seu nome:</label>
-                    <input type="text" id="nome" name="nome" v-model="nome" placeholder="Digite o seu nome">
+                    <input type="text" id="nome" name="nome" required v-model="nome" placeholder="Digite o seu nome">
                 </div>
                 <div class="inputContainer col">
-                    <label for="telefone"><i class="fa-solid fa-phone"></i> Seu telefone:</label>
-                    <input type="text" id="telefone" name="telefone" v-model="telefone" placeholder="Digite o seu telefone">
+                    <label for="telefone"><i class="fa-brands fa-whatsapp"></i> Seu whatapp:</label>
+                    <input type="text" id="telefone" required name="telefone" v-model="telefone" placeholder="Digite o seu telefone">
                 </div>
             </div>
             <div class="inputContainer">
                 <label for="pao"><i class="fa-solid fa-bread-slice"></i> Escolha o pão:</label>
                 <select id="pao" name="pao" v-model="pao">
-                    <option value="" selected>Selecione o seu pão</option>
+                    <option selected>Selecione o seu pão</option>
                     <option 
                     v-for="pao in paes" 
                     :key="pao.id" 
@@ -27,8 +27,8 @@
             </div>
             <div class="inputContainer">
                 <label for="carne"><i class="fa-solid fa-burger"></i> Escolha a carne do seu bunger:</label>
-                <select id="carne" name="carne" v-model="carne">
-                    <option value="" selected>Selecione o tipo de carne</option>
+                <select id="carne" name="carne" required v-model="carne">
+                    <option selected>Selecione o tipo de carne</option>
                     <option 
                     v-for="carne in carnes" 
                     :key="carne.tipo" 
@@ -38,8 +38,15 @@
                 </select>
             </div>
             <div id="opcionaisContainer" class="inputContainer">
+                <label for="pontoCarne" id="pontoCarneTitle"><i class="fa-solid fa-fire"></i> Selecione o ponto da carne:</label>
+                <div class="checkBoxContainer" v-for="pontocarne in pontocarnedata" :key="pontocarne.id">
+                    <input type="radio"  name="pontocarne" v-model="pontocarnes" :value="pontocarne.tipo">
+                    <span>{{ pontocarne.tipo }}</span>
+                </div>
+            </div>
+            <div id="opcionaisContainer" class="inputContainer">
                 <label for="opcionais" id="opcionaisTtitle"><i class="fa-solid fa-plus"></i> Selecione os opcionais:</label>
-                <div class="checkBoxContainer" v-for="opcional in opcionaisdata" :key="opcional.id">
+                <div class="checkBoxContainer radio" v-for="opcional in opcionaisdata" :key="opcional.id">
                     <input type="checkbox"  name="opcionais" v-model="opcionais" :value="opcional.tipo">
                     <span>{{ opcional.tipo }}</span>
                 </div>
@@ -64,11 +71,13 @@ export default {
             paes: null,
             carnes: null,
             opcionaisdata: null,
+            pontocarnedata: null,
             nome: null,
             telefone: null,
             pao: null,
             carne: null,
             opcionais: [],
+            pontocarnes: [],
             msg: null
         }
     },
@@ -79,7 +88,8 @@ export default {
 
            this.paes = data.paes;
            this.carnes = data.carnes;
-           this.opcionaisdata = data.opcionais
+           this.opcionaisdata = data.opcionais;
+           this.pontocarnedata = data.pontocarnes;
         },
         async createBurger(e){
             e.preventDefault();
@@ -89,6 +99,7 @@ export default {
                 carne: this.carne,
                 pao: this.pao,
                 opcionais: Array.from(this.opcionais),
+                pontocarnes: this.pontocarnes,
                 status: "Solicitado"
             }
             const dataJson = JSON.stringify(data);
@@ -111,6 +122,7 @@ export default {
             this.carne="";
             this.pao="";
             this.opcionais="";
+            this.pontocarnes="";
 
         }
     },
@@ -135,6 +147,7 @@ export default {
         margin-bottom: 18px;
         color: #222;
         padding: .5em .5em;
+        width: 100%;
     }
     input[type=text], select{
         padding: .5em 1em;
@@ -177,6 +190,7 @@ export default {
     .checkBoxContainer span{
         margin-left: 6px;
         font-weight: bold;
+        margin-top: -5px;
     }
     .submitBtn{
         background-color: #222;
