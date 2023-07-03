@@ -1,10 +1,18 @@
 <template>
-  <h2>Home</h2>
+  <Banner/>
+  <div class="container">
+    <div class="main">
+      <h1>Monte o seu bunger:</h1>
+      <BurgerForm/>
+    </div>
+  </div>
 </template>
 
 <script>
+import Banner from '../components/Banner.vue';
+import BurgerForm from '../components/BurgerForm.vue';
 export default {
-
+    components: { Banner, BurgerForm }
 }
 </script>
 

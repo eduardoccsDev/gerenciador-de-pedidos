@@ -1,31 +1,30 @@
 <template>
-  <nav>
-    <router-link to="/">
-        <img :src="logo" id="logo">
-    </router-link>
-    <ul>
-        <li>
+    <nav>
+        <div class="container containerFlex">  
             <router-link to="/">
-            Home
+                <img :src="logo" :alt="alt" id="logo">
             </router-link>
-        </li>
-        <li>
-            <router-link to="/pedidos">
-            Pedidos
-            </router-link>
-        </li>
-    </ul>
-  </nav>
+            <ul>
+                <li>
+                    <router-link to="/">
+                    Home
+                    </router-link>
+                </li>
+                <li>
+                    <router-link to="/pedidos">
+                    Pedidos
+                    </router-link>
+                </li>
+            </ul>
+        </div>
+    </nav>
 </template>
 <!-- SCRIPT -->
 <script>
 export default {
  name: 'Navbar',
- data(){
-    return{
-        logo:'/img/logo.png'
-    }
- }
+ props:['logo', 'alt'],
+ 
 }
 </script>
 <!-- CSS -->
@@ -33,9 +32,12 @@ export default {
     nav{
         background-color: rgb(219, 219, 219);
         padding: .5em 1em;
+        border-radius: 0px 0px 10px 10px;
+    }
+    .containerFlex{
         display: flex;
         justify-content: space-between;
-        border-radius: 10px;
+        align-items: center;
     }
     #logo{
         width: 100px;

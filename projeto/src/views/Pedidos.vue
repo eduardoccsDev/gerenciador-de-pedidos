@@ -1,5 +1,7 @@
 <template>
-  <h2>Pedidos</h2>
+  <div class="main">
+    <h2>Pedidos</h2>
+  </div>
 </template>
 
 <script>
