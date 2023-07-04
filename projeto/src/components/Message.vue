@@ -23,4 +23,7 @@ export default {
         width: 400px;
         margin: 30px auto;
     }
+    p{
+      margin-bottom: 0rem;
+    }
 </style>
