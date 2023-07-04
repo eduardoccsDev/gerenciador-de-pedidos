@@ -102,8 +102,24 @@
         "Pepino"
       ],
       "pontocarnes": "Bem passada",
-      "status": "Em produção",
+      "status": "Finalizado",
       "id": 2
+    },
+    {
+      "nome": "Eduardo castro",
+      "telefone": "85989213582",
+      "carne": "Alcatra",
+      "pao": "Italiano Branco",
+      "opcionais": [
+        "Cebola roxa",
+        "Salame",
+        "Bacon",
+        "Cheddar",
+        "Tomate"
+      ],
+      "pontocarnes": "Ao ponto",
+      "status": "Em produção",
+      "id": 3
     }
   ]
 }
