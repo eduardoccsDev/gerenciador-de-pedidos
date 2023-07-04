@@ -16,7 +16,7 @@
             <div class="inputContainer">
                 <label for="pao"><i class="fa-solid fa-bread-slice"></i> Escolha o pão:</label>
                 <select id="pao" name="pao" v-model="pao">
-                    <option selected>Selecione o seu pão</option>
+                    <option value="" selected disabled>Selecione o seu pão</option>
                     <option 
                     v-for="pao in paes" 
                     :key="pao.id" 
@@ -28,7 +28,7 @@
             <div class="inputContainer">
                 <label for="carne"><i class="fa-solid fa-burger"></i> Escolha a carne do seu bunger:</label>
                 <select id="carne" name="carne" required v-model="carne">
-                    <option selected>Selecione o tipo de carne</option>
+                    <option value="" selected disabled>Selecione o tipo de carne</option>
                     <option 
                     v-for="carne in carnes" 
                     :key="carne.tipo" 
@@ -40,15 +40,15 @@
             <div id="opcionaisContainer" class="inputContainer">
                 <label for="pontoCarne" id="pontoCarneTitle"><i class="fa-solid fa-fire"></i> Selecione o ponto da carne:</label>
                 <div class="checkBoxContainer" v-for="pontocarne in pontocarnedata" :key="pontocarne.id">
-                    <input type="radio"  name="pontocarne" v-model="pontocarnes" :value="pontocarne.tipo">
-                    <span>{{ pontocarne.tipo }}</span>
+                    <input type="radio" :id="pontocarne.tipo" name="pontocarne" v-model="pontocarnes" :value="pontocarne.tipo">
+                    <label class="optionL" :for="pontocarne.tipo">{{ pontocarne.tipo }}</label>
                 </div>
             </div>
             <div id="opcionaisContainer" class="inputContainer">
                 <label for="opcionais" id="opcionaisTtitle"><i class="fa-solid fa-plus"></i> Selecione os opcionais:</label>
-                <div class="checkBoxContainer radio" v-for="opcional in opcionaisdata" :key="opcional.id">
-                    <input type="checkbox"  name="opcionais" v-model="opcionais" :value="opcional.tipo">
-                    <span>{{ opcional.tipo }}</span>
+                <div class="checkBoxContainer" v-for="opcional in opcionaisdata" :key="opcional.id">
+                    <input type="checkbox" :id="opcional.tipo" name="opcionais" v-model="opcionais" :value="opcional.tipo">
+                    <label class="optionL" :for="opcional.tipo">{{ opcional.tipo }}</label>
                 </div>
             </div>
             <div class="inputContainer">
@@ -121,7 +121,7 @@ export default {
             this.telefone="";
             this.carne="";
             this.pao="";
-            this.opcionais="";
+            this.opcionais=[];
             this.pontocarnes="";
 
         }
@@ -148,6 +148,12 @@ export default {
         color: #222;
         padding: .5em .5em;
         width: 100%;
+    }
+    .optionL{
+        width: auto;
+        margin-top: -5px;
+        margin-bottom: 0px;
+        padding: 0px 5px;
     }
     input[type=text], select{
         padding: .5em 1em;

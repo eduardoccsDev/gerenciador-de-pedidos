@@ -92,6 +92,18 @@
     }
   ],
   "burgers": [
-    
+    {
+      "nome": "Lia Fernanda",
+      "telefone": "85984011064",
+      "carne": "Veggie burger",
+      "pao": "Integral",
+      "opcionais": [
+        "Tomate",
+        "Pepino"
+      ],
+      "pontocarnes": "Bem passada",
+      "status": "Em produção",
+      "id": 2
+    }
   ]
 }

@@ -14,7 +14,7 @@ name: 'Footer'
 
 <style scoped>
   footer{
-    background-color: rgb(219, 219, 219);
+    background-color: #222;
     padding:20px;
     border-radius: 10px 10px 0px 0px;
     height: 200px;
@@ -29,5 +29,8 @@ name: 'Footer'
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  p{
+    color: #fff;
   }
 </style>

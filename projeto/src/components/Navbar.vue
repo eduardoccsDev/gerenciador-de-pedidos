@@ -30,7 +30,7 @@ export default {
 <!-- CSS -->
 <style scoped>
     nav{
-        background-color: rgb(219, 219, 219);
+        background-color: #222;
         padding: .5em 1em;
         border-radius: 0px 0px 10px 10px;
     }
