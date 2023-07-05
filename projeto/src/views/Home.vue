@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import Banner from '../components/Banner.vue';
 import BurgerForm from '../components/BurgerForm.vue';
 export default {
