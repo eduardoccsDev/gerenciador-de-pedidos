@@ -45,28 +45,28 @@
                 </div>
             </div>
             <label for="opcionais" id="opcionaisTtitle"><i class="fa-solid fa-plus"></i> Selecione os opcionais:</label>
-            <div class="opcionaisContainer inputContainer sombra">
+            <div class="opcionaisContainer inputContainer">
                 <div class="checkBoxContainer" v-for="opcional in opcionaisN" :key="opcional.idopcional">
                     <input type="checkbox" :id="opcional.nomeOpcional" name="opcionais" v-model="opcionais" :value="opcional.nomeOpcional">
                     <label class="optionL" :for="opcional.nomeOpcional">{{ opcional.nomeOpcional }}</label>
                 </div>
             </div>
             <label for="molhos" id="molhosTitle"><i class="fa-solid fa-droplet"></i> Selecione os molhos<span> (dentro do burger)</span>:</label>
-            <div class="opcionaisContainer inputContainer sombra">
+            <div class="opcionaisContainer inputContainer">
                 <div class="checkBoxContainer" v-for="molho in molhosN" :key="molho.idmolho">
                     <input type="checkbox" :id="molho.nomeMolho" name="molhos" v-model="molhos" :value="molho.nomeMolho">
                     <label class="optionL" :for="molho.nomeMolho">{{ molho.nomeMolho }}</label>
                 </div>
             </div>
             <label for="acompanhamentos" id="acompanhamentoTitle"><i class="fa-solid fa-bowl-food"></i> Selecione os acompanhamentos:</label>
-            <div class="opcionaisContainer inputContainer sombra">
+            <div class="opcionaisContainer inputContainer listModel">
                 <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN" :key="acompanhamento.idacompanhamento">
                     <input type="checkbox" :id="acompanhamento.nomeAcompanhamento" name="acompanhamentos" v-model="acompanhamentos" :value="acompanhamento.nomeAcompanhamento">
                     <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{ acompanhamento.nomeAcompanhamento }} - {{acompanhamento.qtdAcompanhamento}}</label>
                 </div>
             </div>
             <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-beer-mug-empty"></i> Selecione a bebida:</label>
-            <div class="opcionaisContainer inputContainer sombra">
+            <div class="opcionaisContainer inputContainer listModel">
                 <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
                     <input type="radio" :id="bebida.idbebida" name="bebida" v-model="bebidas" :value="bebida.nomeBebida">
                     <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} - {{bebida.qtdBebida}}</label>
@@ -170,8 +170,12 @@ export default {
 
 <style scoped>
     #burgerForm{
-        max-width: 400px;
+        max-width: 450px;
         margin: 0 auto;
+        padding: 1em;
+        border: solid 2px #0000000d;
+        border-radius: 20px;
+        box-shadow: 3px 3px 3px 1px #0000004d;
     }
     .inputContainer{
         display: flex;
@@ -188,11 +192,18 @@ export default {
     .obrigatorio {
     color: #ec5656;
     }
+    .opcionaisContainer.inputContainer.listModel{
+        display: block;
+    }
+    .opcionaisContainer.inputContainer.listModel .checkBoxContainer{
+        width: 100%;
+    }
     .optionL{
         width: auto;
         margin-top: -5px;
         margin-bottom: 0px;
         padding: 0px 5px;
+        font-weight: 500;
     }
     input[type=text], select{
         padding: .5em 1em;
@@ -220,6 +231,9 @@ export default {
         flex-wrap: wrap;
         overflow-y: scroll;
         max-height: 117px;
+        background-color: rgb(248, 248, 248);
+        padding: 1em;
+        border-radius: 10px;
     }
     #opcionaiustitle{
         width: 100%;

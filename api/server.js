@@ -128,6 +128,17 @@ app.post('/burgers', (req, res) => {
     }
   });
 });
+//pega os pedidos
+app.get('/burgers', (req, res) => {
+  connection.query('SELECT idburger,nomeCliente,telefoneCliente, carne, pontoCarne, pao, opcionais,molhos,acompanhamento,bebidas,tipoBebida,corStatus,status  FROM burgers INNER JOIN status ON status = status.nomeStatus INNER JOIN bebidas ON bebidas = bebidas.nomeBebida;', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
 // Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
