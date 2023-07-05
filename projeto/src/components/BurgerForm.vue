@@ -65,7 +65,7 @@
                     <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{ acompanhamento.nomeAcompanhamento }} - {{acompanhamento.qtdAcompanhamento}}</label>
                 </div>
             </div>
-            <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-fire"></i> Selecione a bebida:</label>
+            <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-beer-mug-empty"></i> Selecione a bebida:</label>
             <div class="opcionaisContainer inputContainer sombra">
                 <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
                     <input type="radio" :id="bebida.idbebida" name="bebida" v-model="bebidas" :value="bebida.nomeBebida">
