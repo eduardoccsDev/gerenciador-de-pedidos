@@ -1,5 +1,6 @@
 const express = require('express');
-const mysql = require('mysql');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 
 const app = express();
 const port = 8800;
@@ -13,6 +14,9 @@ app.use(function(req, res, next) {
      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
      next();
  });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configurar a conexão com o banco de dados SQL
 const connection = mysql.createConnection({
@@ -73,6 +77,54 @@ app.get('/opcionais', (req, res) => {
       res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
     } else {
       res.json(rows);
+    }
+  });
+});
+//pepa os molhos
+app.get('/molhos', (req, res) => {
+  connection.query('SELECT * FROM molhos', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//pega os acompanhamentos
+app.get('/acompanhamentos', (req, res) => {
+  connection.query('SELECT * FROM acompanhamentos', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//pega as bebidas
+app.get('/bebidas', (req, res) => {
+  connection.query('SELECT * FROM bebidas ORDER BY tipoBebida DESC', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//envia o pedido
+app.post('/burgers', (req, res) => {
+  const dados = req.body; // Obtém os dados enviados no corpo da requisição
+
+  // Inserção dos dados no banco de dados
+  connection.query('INSERT INTO burgers SET ?', dados, (err, result) => {
+    if (err) {
+      console.error('Erro ao inserir os dados:', err);
+      res.status(500).json({ error: 'Erro ao inserir os dados no banco de dados' });
+    } else {
+      // Dados inseridos com sucesso
+      res.json({ message: 'Dados inseridos com sucesso' });
     }
   });
 });

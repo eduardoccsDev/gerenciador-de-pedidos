@@ -2,19 +2,19 @@
   <div id="fetchAllForm">
     <Message :msg="msg" v-show="msg"/>
     <div>
-        <form id="burgerForm" @submit="createBurger">
+        <form id="burgerForm" @submit.prevent="enviarDados">
             <div class="row">
                 <div class="inputContainer col">
-                    <label for="nome"><i class="fa-solid fa-user"></i> Seu nome:</label>
+                    <label for="nome"><i class="fa-solid fa-user"></i> Seu nome<span class="obrigatorio">*</span>:</label>
                     <input type="text" id="nome" name="nome" required v-model="nome" placeholder="Digite o seu nome">
                 </div>
                 <div class="inputContainer col">
-                    <label for="telefone"><i class="fa-brands fa-whatsapp"></i> Seu whatapp:</label>
+                    <label for="telefone"><i class="fa-brands fa-whatsapp"></i> Seu whatapp<span class="obrigatorio">*</span>:</label>
                     <input type="text" id="telefone" required name="telefone" v-model="telefone" placeholder="Digite o seu telefone">
                 </div>
             </div>
             <div class="inputContainer">
-                <label for="pao"><i class="fa-solid fa-bread-slice"></i> Escolha o pão:</label>
+                <label for="pao"><i class="fa-solid fa-bread-slice"></i> Escolha o pão<span class="obrigatorio">*</span>:</label>
                 <select id="pao" name="pao" v-model="pao">
                     <option value="" selected disabled>Selecione o seu pão</option>
                     <option 
@@ -26,7 +26,7 @@
                 </select>
             </div>
             <div class="inputContainer">
-                <label for="carne"><i class="fa-solid fa-burger"></i> Escolha a carne do seu bunger:</label>
+                <label for="carne"><i class="fa-solid fa-burger"></i> Escolha a carne do seu bunger<span class="obrigatorio">*</span>:</label>
                 <select id="carne" name="carne" required v-model="carne">
                     <option value="" selected disabled>Selecione o tipo de carne</option>
                     <option 
@@ -37,7 +37,7 @@
                     </option>
                 </select>
             </div>
-            <label for="pontoCarne" id="pontoCarneTitle"><i class="fa-solid fa-fire"></i> Selecione o ponto da carne:</label>
+            <label for="pontoCarne" id="pontoCarneTitle"><i class="fa-solid fa-fire"></i> Selecione o ponto da carne<span class="obrigatorio">*</span>:</label>
             <div class="opcionaisContainer inputContainer">
                 <div class="checkBoxContainer" v-for="pontocarne in pontocarneN" :key="pontocarne.idpontocarne">
                     <input type="radio" :id="pontocarne.nomePontoCarne" name="pontocarne" v-model="pontocarnes" :value="pontocarne.nomePontoCarne">
@@ -45,10 +45,31 @@
                 </div>
             </div>
             <label for="opcionais" id="opcionaisTtitle"><i class="fa-solid fa-plus"></i> Selecione os opcionais:</label>
-            <div class="opcionaisContainer inputContainer">
+            <div class="opcionaisContainer inputContainer sombra">
                 <div class="checkBoxContainer" v-for="opcional in opcionaisN" :key="opcional.idopcional">
                     <input type="checkbox" :id="opcional.nomeOpcional" name="opcionais" v-model="opcionais" :value="opcional.nomeOpcional">
                     <label class="optionL" :for="opcional.nomeOpcional">{{ opcional.nomeOpcional }}</label>
+                </div>
+            </div>
+            <label for="molhos" id="molhosTitle"><i class="fa-solid fa-droplet"></i> Selecione os molhos<span> (dentro do burger)</span>:</label>
+            <div class="opcionaisContainer inputContainer sombra">
+                <div class="checkBoxContainer" v-for="molho in molhosN" :key="molho.idmolho">
+                    <input type="checkbox" :id="molho.nomeMolho" name="molhos" v-model="molhos" :value="molho.nomeMolho">
+                    <label class="optionL" :for="molho.nomeMolho">{{ molho.nomeMolho }}</label>
+                </div>
+            </div>
+            <label for="acompanhamentos" id="acompanhamentoTitle"><i class="fa-solid fa-bowl-food"></i> Selecione os acompanhamentos:</label>
+            <div class="opcionaisContainer inputContainer sombra">
+                <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN" :key="acompanhamento.idacompanhamento">
+                    <input type="checkbox" :id="acompanhamento.nomeAcompanhamento" name="acompanhamentos" v-model="acompanhamentos" :value="acompanhamento.nomeAcompanhamento">
+                    <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{ acompanhamento.nomeAcompanhamento }} - {{acompanhamento.qtdAcompanhamento}}</label>
+                </div>
+            </div>
+            <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-fire"></i> Selecione a bebida:</label>
+            <div class="opcionaisContainer inputContainer sombra">
+                <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
+                    <input type="radio" :id="bebida.idbebida" name="bebida" v-model="bebidas" :value="bebida.nomeBebida">
+                    <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} - {{bebida.qtdBebida}}</label>
                 </div>
             </div>
             <div class="inputContainer">
@@ -69,67 +90,26 @@ export default {
     },
     data(){
         return{
-            // paes: null,
-            // carnes: null,
-            // opcionaisdata: null,
-            // pontocarnedata: null,
             nome: null,
             telefone: null,
             pao: null,
             carne: null,
             opcionais: [],
             pontocarnes: [],
+            molhos:[],
+            bebidas:[],
+            acompanhamentos:[],
             carnesN:[],
             paesN:[],
             pontocarneN:[],
             opcionaisN:[],
+            molhosN:[],
+            acompanhamentosN:[],
+            bebidasN:[],
             msg: null
         }
     },
     methods:{
-        // async getIngredientes(){
-        // //    const req = await fetch("http://localhost:3000/ingredientes"); 
-        //    const data  = await req.json();
-
-        // //    this.paes = data.paes;
-        // //    this.carnes = data.carnes;
-        //    this.opcionaisdata = data.opcionais;
-        //    this.pontocarnedata = data.pontocarnes;
-        // },
-        // async createBurger(e){
-        //     e.preventDefault();
-        //     const data={
-        //         nome: this.nome,
-        //         telefone: this.telefone,
-        //         // carne: this.carne,
-        //         // pao: this.pao,
-        //         opcionais: Array.from(this.opcionais),
-        //         pontocarnes: this.pontocarnes,
-        //         status: "Solicitado"
-        //     }
-        //     const dataJson = JSON.stringify(data);
-        //     // const req = await fetch("http://localhost:3000/burgers",{
-        //     //     method: "POST",
-        //     //     headers:{"Content-Type": "application/json"},
-        //     //     body: dataJson
-        //     // });
-
-        //     const res = await req.json();
-        //     // Colocar mensagem do sistema
-        //     this.msg = `Pedido Nº ${res.id} realizado com sucesso`
-
-        //     //limpar mensagem
-        //     setTimeout(()=> this.msg = "", 3000);
-
-        //     //Limpar campos após envio
-        //     this.nome="";
-        //     this.telefone="";
-        //     this.carne="";
-        //     this.pao="";
-        //     this.opcionais=[];
-        //     this.pontocarnes="";
-
-        // }
         getDados(url, propriedade) {
             axios.get(url)
             .then(response => {
@@ -138,6 +118,39 @@ export default {
             .catch(error => {
                 console.log('Erro ao obter os dados:', error);
             });
+        },
+        enviarDados(){
+            const dados = {
+                nomeCliente: this.nome,
+                telefoneCliente: this.telefone,
+                carne: this.carne,
+                pontoCarne: this.pontocarnes,
+                pao: this.pao,
+                opcionais: this.opcionais.join(','),
+                molhos: this.molhos.join(','),
+                acompanhamento: this.acompanhamentos.join(','),
+                bebidas: this.bebidas
+
+            };
+            // requisição POST
+            axios.post('http://localhost:8800/burgers', dados)
+            .then(response => {
+                this.msg = 'Pedido realizado com sucesso'
+                setTimeout(()=> this.msg = "", 3000);
+                //limpar campos
+                this.nome="";
+                this.telefone="";
+                this.carne="";
+                this.pontocarnes="";
+                this.pao="";
+                this.opcionais=[];
+                this.molhos=[];
+                this.acompanhamentos=[];
+                this.bebidas=[];
+            })
+            .catch(error => {
+                console.log('Erro ao enviar os dados:', error);
+            })
         }
         
     },
@@ -147,6 +160,9 @@ export default {
        this.getDados('http://localhost:8800/pontocarne', 'pontocarneN');
        this.getDados('http://localhost:8800/paes', 'paesN');
        this.getDados('http://localhost:8800/opcionais', 'opcionaisN');
+       this.getDados('http://localhost:8800/molhos', 'molhosN');
+       this.getDados('http://localhost:8800/acompanhamentos', 'acompanhamentosN');
+       this.getDados('http://localhost:8800/bebidas', 'bebidasN');
 
     }
 }
@@ -168,6 +184,9 @@ export default {
         color: #222;
         padding: .5em .5em;
         width: 100%;
+    }
+    .obrigatorio {
+    color: #ec5656;
     }
     .optionL{
         width: auto;
