@@ -3,10 +3,10 @@
     <Message :msg="msg" v-show="msg"/>
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Solicitados</button>
+            <button @click="getDados('http://localhost:8800/burgerss', 'burgersN')" class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Solicitados</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Em produção</button>
+            <button @click="getDados('http://localhost:8800/burgersep', 'burgersEP')" class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Em produção</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Finalizados</button>
@@ -20,13 +20,7 @@
                 <div class="card" v-for="burger in burgersN" :key="burger.idburger">
                     <div class="cardTitle">
                         <p>Pedido: #{{burger.idburger}}</p>
-                        <button 
-                        class="btn deleteBtn" 
-                        title="Cancelar" 
-                        @click="deleteBurger(burger.idburger)">
-                            <i class="fa-solid fa-ban"></i>
-                            Cancelar
-                        </button>
+                        <p class="horaPedido"><i class="fa-regular fa-clock"></i> {{burger.horaPedido}}</p>
                     </div>
                     <div class="cardClientInfo">
                         <p><i class="fa-solid fa-user"></i> {{burger.nomeCliente}}</p>
@@ -35,16 +29,29 @@
                                 {{burger.telefoneCliente}}
                             </a>
                         </p>
+                        <div>
+                            <select name="status" @change="updateBurger($event, burger.idburger, 's', 'burgersN')">
+                                <option 
+                                v-for="s in statusN" 
+                                :key="s.idstatus" 
+                                :value="s.nomeStatus" 
+                                :selected="burger.status == s.nomeStatus"
+                                >{{s.nomeStatus}}</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="iconsPedido">
-                        <p v-if="burger.opcionais !== ''"><i class="fa-solid fa-plus" :style="{'background-color':burger.corStatus}"></i> Opcionais: <span>{{ burger.opcionais.split(',').length }}</span></p>
-                        <p v-if="burger.molhos !== ''"><i class="fa-solid fa-droplet" :style="{'background-color':burger.corStatus}"></i> Molhos: <span>{{ burger.molhos.split(',').length }}</span></p>
-                        <p v-if="burger.acompanhamento !== ''"><i class="fa-solid fa-bowl-food" :style="{'background-color':burger.corStatus}"></i> Guarnição: <span>{{ burger.bebidas.split(',').length }}</span></p>
-                        <p v-if="burger.bebidas !== ''"><i class="fa-solid fa-beer-mug-empty" :style="{'background-color':burger.corStatus}"></i> Bebidas: <span>{{ burger.bebidas.split(',').length }}</span></p>
+                    <div class="cardFooter">
+                        <button type="button" class="btn detalhes" :style="{'background-color':burger.corStatus}" data-bs-toggle="modal" :data-bs-target="'#'+ burger.idburger">
+                            Detalhes
+                        </button>
+                        <button 
+                        class="btn deleteBtn" 
+                        title="Cancelar" 
+                        @click="deleteBurger(burger.idburger, 's', 'bugersN')">
+                            <i class="fa-solid fa-ban"></i>
+                            Cancelar
+                        </button>
                     </div>
-                    <button type="button" class="btn detalhes" :style="{'background-color':burger.corStatus}" data-bs-toggle="modal" :data-bs-target="'#'+ burger.idburger">
-                        Detalhes
-                    </button>
                     <!-- The Modal -->
                     <div class="modal" :id="burger.idburger">
                     <div class="modal-dialog modal-dialog-centered">
@@ -64,16 +71,6 @@
                                             {{burger.telefoneCliente}}
                                         </a>
                                     </p>
-                                </div>
-                                <div>
-                                    <select name="status" @change="updateBurger($event, burger.idburger)">
-                                        <option 
-                                        v-for="s in statusN" 
-                                        :key="s.idstatus" 
-                                        :value="s.nomeStatus" 
-                                        :selected="burger.status == s.nomeStatus"
-                                        >{{s.nomeStatus}}</option>
-                                    </select>
                                 </div>
                             </div>
                             <div class="hamburgerContent">
@@ -114,15 +111,17 @@
         <!-- EM PRODUÇÃO -->
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
             <div class="cardsContainer">
-                <div class="card"  v-for="burger in burgersEP" :key="burger.idburger">
+                <div class="card" :class="({'countdownFinished': burger.concluido})" v-for="burger in burgersEP" :key="burger.idburger">
                     <div class="cardTitle">
                         <p>Pedido: #{{burger.idburger}}</p>
-                        <button 
-                        class="btn deleteBtn" 
-                        title="Cancelar" 
-                        @click="deleteBurger(burger.idburger)">
-                            <i class="fa-solid fa-ban"></i>
-                            Cancelar
+                        <p class="horaPedido"><i class="fa-regular fa-clock"></i> {{burger.horaPedido}}</p>
+                    </div>
+                    <div class="timerPreparo">
+                        <button @click="iniciarContagem(burger)">
+                            <p class="tempoTitle">
+                                <i class="fa-solid fa-hourglass-end"></i> 
+                                {{ burger.tempo > 0 ? formatarTempo(burger.tempo) : 'Preparar pedido'}}
+                            </p>
                         </button>
                     </div>
                     <div class="cardClientInfo">
@@ -132,16 +131,29 @@
                                 {{burger.telefoneCliente}}
                             </a>
                         </p>
+                        <div>
+                            <select name="status" @change="updateBurger($event, burger.idburger, 'ep', 'burgersEP')">
+                                <option 
+                                v-for="s in statusN" 
+                                :key="s.idstatus" 
+                                :value="s.nomeStatus" 
+                                :selected="burger.status == s.nomeStatus"
+                                >{{s.nomeStatus}}</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="iconsPedido">
-                        <p v-if="burger.opcionais !== ''"><i class="fa-solid fa-plus" :style="{'background-color':burger.corStatus}"></i> Opcionais: <span>{{ burger.opcionais.split(',').length }}</span></p>
-                        <p v-if="burger.molhos !== ''"><i class="fa-solid fa-droplet" :style="{'background-color':burger.corStatus}"></i> Molhos: <span>{{ burger.molhos.split(',').length }}</span></p>
-                        <p v-if="burger.acompanhamento !== ''"><i class="fa-solid fa-bowl-food" :style="{'background-color':burger.corStatus}"></i> Guarnição: <span>{{ burger.bebidas.split(',').length }}</span></p>
-                        <p v-if="burger.bebidas !== ''"><i class="fa-solid fa-beer-mug-empty" :style="{'background-color':burger.corStatus}"></i> Bebidas: <span>{{ burger.bebidas.split(',').length }}</span></p>
+                    <div class="cardFooter">
+                        <button type="button" class="btn detalhes" :style="{'background-color':burger.corStatus}" data-bs-toggle="modal" :data-bs-target="'#'+ burger.idburger">
+                            Detalhes
+                        </button>
+                        <button 
+                        class="btn deleteBtn" 
+                        title="Cancelar" 
+                        @click="deleteBurger(burger.idburger, 's', 'bugersN')">
+                            <i class="fa-solid fa-ban"></i>
+                            Cancelar
+                        </button>
                     </div>
-                    <button type="button" class="btn detalhes" :style="{'background-color':burger.corStatus}" data-bs-toggle="modal" :data-bs-target="'#'+ burger.idburger">
-                        Detalhes
-                    </button>
                     <!-- The Modal -->
                     <div class="modal" :id="burger.idburger">
                     <div class="modal-dialog modal-dialog-centered">
@@ -161,16 +173,6 @@
                                             {{burger.telefoneCliente}}
                                         </a>
                                     </p>
-                                </div>
-                                <div>
-                                    <select name="status" @change="updateBurger($event, burger.idburger)">
-                                        <option 
-                                        v-for="s in statusN" 
-                                        :key="s.idstatus" 
-                                        :value="s.nomeStatus" 
-                                        :selected="burger.status == s.nomeStatus"
-                                        >{{s.nomeStatus}}</option>
-                                    </select>
                                 </div>
                             </div>
                             <div class="hamburgerContent">
@@ -204,8 +206,8 @@
                         </div>
                     </div>
                     </div>
-                    
                 </div>
+                <div class="msgVazio" v-if="burgersEP.length === 0">Não há pedidos em produção</div>
             </div>
         </div>
         <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
@@ -235,6 +237,28 @@ export default {
         
     },
     methods:{
+        iniciarContagem(burger){
+            clearInterval(burger.timerId); // Limpa o timer anterior, se houver
+            burger.tempo = 300; // Defina o tempo inicial aqui (em segundos)
+            burger.concluido = 0;
+            burger.timerId = setInterval(() => this.contagemRegressiva(burger), 1000);
+        },
+        contagemRegressiva(burger){
+            if(burger.tempo > 0){
+                burger.tempo--;
+            } else{
+                clearInterval(burger.timerId);
+                burger.concluido = 1;
+                //Contagem regressiva concluida, faca algo aqui
+                
+
+            }
+        },
+        formatarTempo(tempo){
+            const minutos = Math.floor(tempo / 60).toString().padStart(2, '0');
+            const segundos = (tempo % 60).toString().padStart(2, '0');
+            return `Tempo para preparo: ${minutos}:${segundos}`;
+        },
         getDados(url, propriedade) {
             axios.get(url)
             .then(response => {
@@ -244,46 +268,30 @@ export default {
                 console.log('Erro ao obter os dados:', error);
             });
         },
-        updateBurger(event, id){
+        updateBurger(event, id, sufixo, arrayNome){
             const novoStatus = event.target.value;
 
             axios.put(`http://localhost:8800/burgers/${id}`,{status:novoStatus})
             .then(response => {
-                this.msg = `Pedido #${id} atualizado para ${novoStatus}`
+                this.msg = `Pedido  N° ${id} atualizado para ${novoStatus}`
                 setTimeout(()=> this.msg = "", 3000);
-                this.getDados('http://localhost:8800/burgersep', 'burgersEP');
+                this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
             })
             .catch(error =>{
                 console.error('Erro ao atualizar o status:', error);
             });
         },
-        deleteBurger(id){
+        deleteBurger(id, sufixo, arrayNome){
             axios.delete(`http://localhost:8800/burgers/${id}`)
             .then(response =>{
-                this.msg = 'Pedido removido com sucesso!'
+                this.msg = `Pedido N° ${id} removido com sucesso!`
                 setTimeout(()=> this.msg = "", 3000);
-                this.getDados('http://localhost:8800/burgerss', 'burgersN');
+                this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
             })
             .catch(error => {
                 console.error('Erro ao excluir o pedido:', error);
             });
         }
-
-        // async deleteBurger(id){
-        //     const req =  await fetch(`http://localhost:3000/burgers/${id}`,{
-        //         method: 'DELETE'
-        //     });
-
-        //     const res = await req.json();
-
-        //     // Colocar mensagem do sistema
-        //     this.msg = 'Pedido removido com sucesso!'
-
-        //     //limpar mensagem
-        //     setTimeout(()=> this.msg = "", 3000);
-
-        //     this.getPedidos();
-        // },
     },
     mounted(){
        this.getDados('http://localhost:8800/burgerss', 'burgersN');
@@ -297,6 +305,40 @@ export default {
     #burgerTable{
         max-width: 1200px;
         margin: 0 auto;
+    }
+    .card .tempoTitle {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 0px;
+    }
+    .card.countdownFinished{
+        border: solid 2px #f76363;
+        box-shadow: 0px 0px 10px -2px #ff0000a1;
+    }
+    .timerPreparo {
+        text-align: left;
+    }
+    .cardFooter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: center;
+    margin-top: 1em;
+    }
+    .timerPreparo button {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: .5em;
+    border: none;
+    background-color: #f76363;
+    color: #fff;
+    padding-block: .5em;
+    }
+    .horaPedido{
+        background-color: #222;
+        color: #fff;
+        padding: .1em .4em;
+        border-radius: 5px;
     }
     .msgVazio {
         margin: auto;
@@ -344,10 +386,12 @@ export default {
         justify-content: space-between;
         align-items: center;
     }
-    .infoCliente select{
+    select{
         border-radius: 10px;
         background-color: #fff;
         border: solid 1px #fff;
+        padding: .1em .5em;
+        margin-right: .5em;
     }
     .infoCliente i{
         margin-right: 10px;
@@ -405,7 +449,7 @@ export default {
     width: 250px;
     text-align: center;
     border-radius: 20px;
-    border: solid 0px #0000000d;
+    border: solid 2px #fff;
     box-shadow: 0px 0px 10px -2px #0000003b;
     }
     .card p{
@@ -414,34 +458,6 @@ export default {
     .cardsContainer {
     display: flex;
     flex-wrap: wrap;
-    }
-    .complementosTitle{
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .hamburgerBox{
-        width: 100%;
-    }
-    .hamburgerH, 
-    .hamburgerContainer
-    {
-    width: 35%;
-    }
-    .hamburgerContainer{
-        padding-right: .5em;
-    }
-    .complementosH,  
-    .complementosContainer{
-    width: 25%;
-    padding-left: .5em;
-    }
-    .clientH, .clientData{
-        width: 16%;
-    }
-    .hamburgerContainer{
-        display: flex;
-        justify-content: space-between;
-        word-break: break-all;
     }
     #burgerTableHeading{
         font-weight: bold;
@@ -453,34 +469,21 @@ export default {
         font-size: 16px;
         margin-top: 2px;
     }
-    .burgerTableRow{
-        width: 100%;
-        padding: 1em;
-        border-bottom: 1px solid #ccc;
-    }
-    #burgerTableHeading .orderId,
-    .burgerTableRow .orderNumber{
-        width: 2%;
-    }
-    .acoes, .acoesH{
-        width: 22%;
-    }
-    select{
-        padding: .5em;
-        margin-right: .5em;
+    .btn{
+        margin: 0px;
     }
     .deleteBtn{
         background-color: #dd5454;
         color: #fff;
-        font-weight: bold;
         border: 2px solid #dd5454;
-        border-radius: 10px;
         padding: .2em .3em;
-        font-size: 16px;
-        margin: 0 auto;
         cursor: pointer;
         transition: .5s;
         margin: 0px;
+        font-size: 16px;
+        font-weight: 500;
+        height: 40px;
+        border-radius: 6px;
     }
     .deleteBtn:hover{
         background-color:rgb(241, 129, 129);

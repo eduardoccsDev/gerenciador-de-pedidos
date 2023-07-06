@@ -83,6 +83,8 @@
 <script>
 import Message from './Message.vue';
 import axios from 'axios';
+const dataAtual = new Date();
+const horario = dataAtual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 export default {
     name:'BurgerForm',
     components:{
@@ -110,17 +112,17 @@ export default {
         }
     },
     methods:{
-        getDados(url, propriedade) {
-            axios.get(url)
-            .then(response => {
+        async getDados(url, propriedade) {
+            try {
+                const response = await axios.get(url);
                 this[propriedade] = response.data;
-            })
-            .catch(error => {
+            } catch (error) {
                 console.log('Erro ao obter os dados:', error);
-            });
+            }
         },
         enviarDados(){
             const dados = {
+                horaPedido: horario,
                 nomeCliente: this.nome,
                 telefoneCliente: this.telefone,
                 carne: this.carne,
@@ -155,14 +157,14 @@ export default {
         
     },
     mounted(){
-    //    this.getIngredientes();
-       this.getDados('http://localhost:8800/carnes', 'carnesN');
-       this.getDados('http://localhost:8800/pontocarne', 'pontocarneN');
-       this.getDados('http://localhost:8800/paes', 'paesN');
-       this.getDados('http://localhost:8800/opcionais', 'opcionaisN');
-       this.getDados('http://localhost:8800/molhos', 'molhosN');
-       this.getDados('http://localhost:8800/acompanhamentos', 'acompanhamentosN');
-       this.getDados('http://localhost:8800/bebidas', 'bebidasN');
+        const baseUrl = 'http://localhost:8800';
+        this.getDados(`${baseUrl}/carnes`, 'carnesN');
+        this.getDados(`${baseUrl}/pontocarne`, 'pontocarneN');
+        this.getDados(`${baseUrl}/paes`, 'paesN');
+        this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
+        this.getDados(`${baseUrl}/molhos`, 'molhosN');
+        this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentosN');
+        this.getDados(`${baseUrl}/bebidas`, 'bebidasN');
 
     }
 }
