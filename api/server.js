@@ -139,6 +139,78 @@ app.get('/burgers', (req, res) => {
     }
   });
 });
+//pega os pedidos solicitados
+app.get('/burgerss', (req, res) => {
+  connection.query('SELECT idburger,nomeCliente,telefoneCliente, carne, pontoCarne, pao, opcionais,molhos,acompanhamento,bebidas,tipoBebida,qtdBebida,corStatus,status  FROM burgers INNER JOIN status ON status = status.nomeStatus INNER JOIN bebidas ON bebidas = bebidas.nomeBebida WHERE status = "Solicitado";', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//pega os pedidos Em Produção
+app.get('/burgersep', (req, res) => {
+  connection.query('SELECT idburger,nomeCliente,telefoneCliente, carne, pontoCarne, pao, opcionais,molhos,acompanhamento,bebidas,tipoBebida,qtdBebida,corStatus,status  FROM burgers INNER JOIN status ON status = status.nomeStatus INNER JOIN bebidas ON bebidas = bebidas.nomeBebida WHERE status = "Em Produção";', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//pega os status
+app.get('/status', (req, res) => {
+  connection.query('SELECT * FROM status', (err, rows) => {
+    if (err) {
+      console.error('Erro ao executar a consulta:', err);
+      res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+//atualiza status
+app.put('/burgers/:id', (req, res) => {
+  const idBurger = req.params.id;
+  const novoStatus = req.body.status;
+
+  const query = 'UPDATE burgers SET status = ? WHERE idburger = ?';
+
+  connection.query(query, [novoStatus, idBurger], (error, results) => {
+    if (error) {
+      console.error('Erro ao atualizar o status do burger:', error);
+      return res.status(500).send('Erro ao atualizar o status do burger');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('Burger não encontrado');
+    }
+
+    res.status(200).send('Status do burger atualizado com sucesso');
+  });
+});
+//deleta pedido
+app.delete('/burgers/:id', (req, res) => {
+  const burgerId = req.params.id;
+
+  const query = 'DELETE FROM burgers WHERE idburger = ?';
+
+  connection.query(query, [burgerId], (error, results) => {
+    if (error) {
+      console.error('Erro ao excluir o pedido:', error);
+      return res.status(500).send('Erro ao excluir o pedido');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('Pedido não encontrado');
+    }
+
+    res.status(200).send('Pedido excluído com sucesso');
+  });
+});
 // Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
