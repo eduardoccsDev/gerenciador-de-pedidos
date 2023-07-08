@@ -235,8 +235,6 @@
             </div>
             <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
                 ...</div>
-            <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab"
-                tabindex="0">...</div>
         </div>
     </div>
 </template>
@@ -285,7 +283,7 @@ export default {
                 //Contagem regressiva concluida, faca algo aqui
                 clearInterval(burger.timerId);
                 burger.concluido = 1;
-
+                this.updateConcluido(burger.idburger);
             }
             // Salva o estado atual no localStorage a cada atualização do tempo
             this.salvarEstado();
@@ -313,10 +311,25 @@ export default {
                     console.log('Erro ao obter os dados:', error);
                 });
         },
+        updateConcluido(id){
+            const concluido = 1;
+
+            axios.put(`http://localhost:8800/burgersc/${id}`, {concluido: concluido })
+                .then(response => {
+                    this.msg = `Pedido  N° ${id} esta atrasado!`
+                    setTimeout(() => this.msg = "", 3000);
+                })
+                .catch(error => {
+                    console.error('Erro ao concluir o pedido:', error);
+                });
+        },
         updateBurger(event, id, sufixo, arrayNome) {
             const novoStatus = event.target.value;
 
-            axios.put(`http://localhost:8800/burgers/${id}`, { status: novoStatus })
+            axios.put(`http://localhost:8800/burgers/${id}`, { 
+                status: novoStatus,
+                ...(novoStatus === 'Solicitado' ? {concluido:0}:{}) 
+            })
                 .then(response => {
                     this.msg = `Pedido  N° ${id} atualizado para ${novoStatus}`
                     setTimeout(() => this.msg = "", 3000);

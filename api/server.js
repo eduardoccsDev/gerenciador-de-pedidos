@@ -38,7 +38,7 @@ connection.connect((err) => {
 
 // Rota para obter dados do banco de dados
 app.get('/carnes', (req, res) => {
-  connection.query('SELECT * FROM carnes', (err, rows) => {
+  connection.query('SELECT * FROM carnes ORDER BY nomeCarne ASC', (err, rows) => {
     if (err) {
       console.error('Erro ao executar a consulta:', err);
       res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
@@ -60,7 +60,7 @@ app.get('/pontocarne', (req, res) => {
 });
 //pega os paes
 app.get('/paes', (req, res) => {
-  connection.query('SELECT * FROM paes', (err, rows) => {
+  connection.query('SELECT * FROM paes ORDER BY nomePao ASC', (err, rows) => {
     if (err) {
       console.error('Erro ao executar a consulta:', err);
       res.status(500).json({ error: 'Erro ao obter os dados do banco de dados' });
@@ -128,6 +128,36 @@ app.post('/burgers', (req, res) => {
     }
   });
 });
+//envia carne
+app.post('/carnes', (req, res) => {
+  const newItem = req.body; // Obtém os dados enviados no corpo da requisição
+
+  // Inserção dos dados no banco de dados
+  connection.query('INSERT INTO carnes SET ?', newItem, (err, result) => {
+    if (err) {
+      console.error('Erro ao inserir os dados:', err);
+      res.status(500).json({ error: 'Erro ao inserir os dados no banco de dados' });
+    } else {
+      // Dados inseridos com sucesso
+      res.json({ message: 'Dados inseridos com sucesso' });
+    }
+  });
+});
+//envia paes
+app.post('/paes', (req, res) => {
+  const newItem = req.body; // Obtém os dados enviados no corpo da requisição
+
+  // Inserção dos dados no banco de dados
+  connection.query('INSERT INTO paes SET ?', newItem, (err, result) => {
+    if (err) {
+      console.error('Erro ao inserir os dados:', err);
+      res.status(500).json({ error: 'Erro ao inserir os dados no banco de dados' });
+    } else {
+      // Dados inseridos com sucesso
+      res.json({ message: 'Dados inseridos com sucesso' });
+    }
+  });
+});
 //pega os pedidos
 app.get('/burgers', (req, res) => {
   connection.query('SELECT idburger,nomeCliente,telefoneCliente, carne, pontoCarne, pao, opcionais,molhos,acompanhamento,bebidas,tipoBebida,qtdBebida,corStatus,status  FROM burgers INNER JOIN status ON status = status.nomeStatus INNER JOIN bebidas ON bebidas = bebidas.nomeBebida;', (err, rows) => {
@@ -176,10 +206,31 @@ app.get('/status', (req, res) => {
 app.put('/burgers/:id', (req, res) => {
   const idBurger = req.params.id;
   const novoStatus = req.body.status;
+  const concluido = req.body.concluido;
 
-  const query = 'UPDATE burgers SET status = ? WHERE idburger = ?';
+  const query = 'UPDATE burgers SET status = ?, concluido = ? WHERE idburger = ?';
 
-  connection.query(query, [novoStatus, idBurger], (error, results) => {
+  connection.query(query, [novoStatus, concluido ,idBurger], (error, results) => {
+    if (error) {
+      console.error('Erro ao atualizar o status do burger:', error);
+      return res.status(500).send('Erro ao atualizar o status do burger');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('Burger não encontrado');
+    }
+
+    res.status(200).send('Status do burger atualizado com sucesso');
+  });
+});
+//atualiza concluido
+app.put('/burgersc/:id', (req, res) => {
+  const idBurger = req.params.id;
+  const concluido = req.body.concluido;
+
+  const query = 'UPDATE burgers SET concluido = ? WHERE idburger = ?';
+
+  connection.query(query, [concluido ,idBurger], (error, results) => {
     if (error) {
       console.error('Erro ao atualizar o status do burger:', error);
       return res.status(500).send('Erro ao atualizar o status do burger');
@@ -199,6 +250,44 @@ app.delete('/burgers/:id', (req, res) => {
   const query = 'DELETE FROM burgers WHERE idburger = ?';
 
   connection.query(query, [burgerId], (error, results) => {
+    if (error) {
+      console.error('Erro ao excluir o pedido:', error);
+      return res.status(500).send('Erro ao excluir o pedido');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('Pedido não encontrado');
+    }
+
+    res.status(200).send('Pedido excluído com sucesso');
+  });
+});
+//deleta carne
+app.delete('/carnes/:id', (req, res) => {
+  const carneId = req.params.id;
+
+  const query = 'DELETE FROM carnes WHERE idcarne = ?';
+
+  connection.query(query, [carneId], (error, results) => {
+    if (error) {
+      console.error('Erro ao excluir o pedido:', error);
+      return res.status(500).send('Erro ao excluir o pedido');
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send('Pedido não encontrado');
+    }
+
+    res.status(200).send('Pedido excluído com sucesso');
+  });
+});
+//deleta pao
+app.delete('/paes/:id', (req, res) => {
+  const carneId = req.params.id;
+
+  const query = 'DELETE FROM paes WHERE idpao = ?';
+
+  connection.query(query, [carneId], (error, results) => {
     if (error) {
       console.error('Erro ao excluir o pedido:', error);
       return res.status(500).send('Erro ao excluir o pedido');
