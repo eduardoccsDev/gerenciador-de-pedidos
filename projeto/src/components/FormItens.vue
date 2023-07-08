@@ -1,10 +1,15 @@
 <template>
     <div class="painel">
         <div class="ContentInput">
-            <p>{{titulo}}</p>
+            <p class="titleName"><i :class="icon" v-if="icon !== ''"></i>{{ titulo }}</p>
             <form>
                 <div class="formContainer">
-                    <input v-model="itemF" type="text" :name="returnName" :placeholder="indicativoInput">
+                    <div class="inputs">
+                        <input v-model="itemF" type="text" :name="dadoParaEnvio" :placeholder="indicativoInput">
+                        <input v-if="modelo == 2" v-model="itemG" type="text" :name="dadoParaEnvio2"
+                            :placeholder="indicativoInput2">
+                    </div>
+
                     <button class="btnF salvar" type="submit" @click.prevent="addItem">
                         <i class="fa-regular fa-floppy-disk"></i>
                         Salvar
@@ -17,7 +22,10 @@
                 <li v-for="item in arrayDados" :key="'item.' + idItem">
                     <div class="ContainerItem">
                         <p class="itemNome">
-                            {{ item[returnName] }}
+                            {{ item[dadoParaEnvio] }}
+                            <span v-if="dadoParaEnvio2 !== ''" class="infoSecundaria">
+                                - {{ item[dadoParaEnvio2] }}
+                            </span>
                         </p>
                         <div class="btns">
                             <button @click="deletarItem(item[idItem])" class="btnF delete">
@@ -34,24 +42,67 @@
 
 <script>
 import axios from 'axios';
+import { defineProps } from 'vue';
 export default {
     name: "FormItens",
-    props: [
-        'arrayNome',
-        'urlApi',
-        'returnName',
-        'arrayDados',
-        'sufixo',
-        'idItem',
-        'dadosParaEnvio',
-        'indicativoInput',
-        'titulo'
-    ],
+    props: {
+        arrayNome: {
+            type: String,
+            required: true
+        },
+        urlApi: {
+            type: String,
+            required: true
+        },
+        arrayDados: {
+            type: Array,
+            default: () => []
+        },
+        sufixo: {
+            type: String,
+            required: true
+        },
+        idItem: {
+            type: String,
+            required: true
+        },
+        dadoParaEnvio: {
+            type: String,
+            required: true
+        },
+        dadoParaEnvio2: {
+            type: String,
+            required: false,
+            default: () => ''
+        },
+        indicativoInput: {
+            type: String,
+            required: true
+        },
+        indicativoInput2: {
+            type: String,
+            required: false,
+            default: () => "Digite algo aqui"
+        },
+        titulo: {
+            type: String,
+            required: true
+        },
+        icon: {
+            type: String,
+            required: false,
+            default: () => ""
+        },
+        modelo: {
+            type: String,
+            required: false,
+            default: () => '1'
+        }
+    },
     data() {
         return {
             itemF: null,
-            item: null,
-            editingItemId: -1
+            itemG: null
         }
     },
     methods: {
@@ -65,13 +116,23 @@ export default {
                 });
         },
         addItem() {
-            const dados = {};
-            dados[this.dadosParaEnvio] = this.itemF;
+
+            let dados = {
+                [this.dadoParaEnvio]: this.itemF
+            };
+
+            if (this.itemG !== null && this.itemG !== "") {
+                dados = {
+                    ...dados,
+                    [this.dadoParaEnvio2]: this.itemG
+                };
+            }
             // requisição POST
             axios.post(this.urlApi, dados)
                 .then(response => {
                     this.$emit('axios-success', this.sufixo, this.arrayNome);
                     this.itemF = "";
+                    this.itemG = "";
                 })
                 .catch(error => {
                     console.log('Erro ao enviar os dados:', error);
@@ -86,27 +147,41 @@ export default {
 
 <style scoped>
 .painel {
-    width: 33%;
+    width: 32%;
+    margin-right: 1em;
+    margin-bottom: 1em;
 }
-.ContentInput{
+
+.titleName i {
+    background-color: #FEB611;
+    color: #222;
+    padding: .2em;
+    border-radius: 5px;
+    margin-right: .5em;
+    width: 25px;
+    text-align: center;
+}
+
+.ContentInput {
     background-color: #222;
     padding: 1em;
     border-radius: 20px;
     margin-bottom: 1em;
+    box-shadow: 2px 2px 7px -6px #000;
 }
 
-.ContainerList{
+.ContainerList {
     background-color: #e9e9e9;
     padding: 1em;
     border-radius: 20px;
     margin-bottom: 1em;
-}
-
-.ContainerList {
     max-height: 260px;
     min-height: 260px;
     overflow-y: scroll;
+    box-shadow: 2px 2px 7px -6px #000;
 }
+
+
 
 .ContentInput p {
     font-size: 18px;
@@ -138,10 +213,20 @@ export default {
 
 input {
     border: none;
-    margin-right: 1em;
-    width: 65%;
+    width: 100%;
     border-radius: 5px;
     padding-inline: .5em;
+    margin-right: .2em;
+}
+input:nth-child(2){
+    margin-left: .5em;
+}
+
+.inputs {
+    width: 75%;
+    margin-right: .5em;
+    display: flex;
+    justify-content: center;
 }
 
 .formContainer {

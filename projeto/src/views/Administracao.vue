@@ -9,11 +9,11 @@
                 :arrayDados="carnesN"
                 sufixo="carnes"
                 arrayNome="carnesN"
-                returnName="nomeCarne"
                 idItem="idcarne"
-                dadosParaEnvio="nomeCarne"
+                dadoParaEnvio="nomeCarne"
                 indicativoInput="Digite o nome da carne"
-                titulo="Adicionar carne a lista de opções:" 
+                titulo="Adicionar carne a lista:" 
+                icon="fa-solid fa-burger"
                 />
                 <FormItens 
                 @axios-success="handleAxiosSuccess" 
@@ -21,23 +21,50 @@
                 :arrayDados="paesN"
                 sufixo="paes"
                 arrayNome="paesN"
-                returnName="nomePao"
                 idItem="idpao"
-                dadosParaEnvio="nomePao" 
+                dadoParaEnvio="nomePao" 
                 indicativoInput="Digite o nome do pão"
-                titulo="Adicionar pão a lista de opções:" 
+                titulo="Adicionar pão a lista:"
+                icon="fa-solid fa-bread-slice" 
                 />
                 <FormItens 
                 @axios-success="handleAxiosSuccess" 
-                urlApi="http://localhost:8800/paes" 
-                :arrayDados="paesN"
-                sufixo="paes"
-                arrayNome="paesN"
-                returnName="nomePao"
-                idItem="idpao"
-                dadosParaEnvio="nomePao" 
-                indicativoInput="Digite o nome do pão"
-                titulo="Adicionar pão a lista de opções:" 
+                urlApi="http://localhost:8800/molhos" 
+                :arrayDados="molhosN"
+                sufixo="molhos"
+                arrayNome="molhosN"
+                idItem="idmolho"
+                dadoParaEnvio="nomeMolho" 
+                indicativoInput="Digite o nome do molho"
+                titulo="Adicionar molho a lista:"
+                icon="fa-solid fa-droplet" 
+                />
+                <FormItens 
+                @axios-success="handleAxiosSuccess" 
+                urlApi="http://localhost:8800/opcionais" 
+                :arrayDados="opcionaisN"
+                sufixo="opcionais"
+                arrayNome="opcionaisN"
+                idItem="idopcional"
+                dadoParaEnvio="nomeOpcional"
+                indicativoInput="Digite o nome do opcional"
+                titulo="Adicionar opcional a lista:"
+                icon="fa-solid fa-plus"
+                />
+                <FormItens 
+                @axios-success="handleAxiosSuccess" 
+                urlApi="http://localhost:8800/acompanhamentos" 
+                :arrayDados="acompanhamentoN"
+                sufixo="acompanhamentos"
+                arrayNome="acompanhamentoN"
+                idItem="idacompanhamento"
+                dadoParaEnvio="nomeAcompanhamento"
+                dadoParaEnvio2="qtdAcompanhamento" 
+                indicativoInput="Digite o nome do acompanhamento"
+                indicativoInput2="Qtd do item"
+                titulo="Adicionar acompanhamento a lista:"
+                icon="fa-solid fa-bowl-food"
+                modelo="2" 
                 />
             </div>
         </div>
@@ -55,7 +82,10 @@ export default {
     data() {
         return {
             carnesN: [],
-            paesN:[]
+            paesN:[],
+            molhosN:[],
+            opcionaisN:[],
+            acompanhamentoN:[]
         };
     },
     methods: {
@@ -83,6 +113,9 @@ export default {
         const baseUrl = 'http://localhost:8800';
         this.getDados(`${baseUrl}/carnes`, 'carnesN');
         this.getDados(`${baseUrl}/paes`, 'paesN');
+        this.getDados(`${baseUrl}/molhos`, 'molhosN');
+        this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
+        this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentoN');
     }
 
 }
@@ -92,10 +125,7 @@ export default {
 .opcoesContainer {
     display: flex;
     align-items: center;
-    justify-content: start;
-}
-
-.opcoesContainer .painel {
-    margin-right: 1em;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 </style>
