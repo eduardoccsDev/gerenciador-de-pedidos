@@ -29,8 +29,7 @@
                         </p>
                         <div class="btns">
                             <button @click="deletarItem(item[idItem])" class="btnF delete">
-                                <i class="fa-solid fa-trash"></i>
-                                Deletar
+                                <i class="fa-regular fa-circle-xmark"></i>
                             </button>
                         </div>
                     </div>
@@ -42,7 +41,6 @@
 
 <script>
 import axios from 'axios';
-import { defineProps } from 'vue';
 export default {
     name: "FormItens",
     props: {
@@ -82,7 +80,7 @@ export default {
         indicativoInput2: {
             type: String,
             required: false,
-            default: () => "Digite algo aqui"
+            default: () => ""
         },
         titulo: {
             type: String,
@@ -199,6 +197,7 @@ export default {
 
 .btnF:hover {
     filter: brightness(120%);
+    transform: scale(1.1);
 }
 
 
@@ -208,7 +207,9 @@ export default {
 }
 
 .delete {
-    background-color: rgb(238, 118, 118);
+    background-color:transparent;
+    color: rgb(238, 118, 118);
+    font-size: 20px;
 }
 
 input {
