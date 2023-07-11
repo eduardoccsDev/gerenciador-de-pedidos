@@ -102,7 +102,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .opcoesContainer {
     display: flex;
     align-items: center;
@@ -111,18 +111,18 @@ export default {
 }
 
 .titleAdmin {
-    background-color: #222;
-    color: #fff;
+    background-color: var(--dark);
+    color: var(--light);
     border-radius: 10px;
     font-size: 32px;
     padding: .2em;
-}
 
-.titleAdmin i {
-    font-size: 26px;
-    background-color: #feb611;
-    color: #222;
-    padding: .2em;
-    border-radius: 10px;
+    i {
+        font-size: 26px;
+        background-color: var(--primary);
+        color: var(--dark);
+        padding: .2em;
+        border-radius: 10px;
+    }
 }
 </style>

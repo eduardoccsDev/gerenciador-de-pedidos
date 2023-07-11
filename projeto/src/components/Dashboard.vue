@@ -100,7 +100,7 @@
                                         <div class="complementosContent">
                                             <p class="titleDestaque">Complementos: </p>
                                             <p>Guarnição: <span class="pontoC">{{ burger.acompanhamento }}</span></p>
-                                            <p>Bebidas: <span class="pontoC">{{ burger.bebidas }} - {{ burger.tipoBebida }} -
+                                            <p>Bebidas: <span class="pontoC">{{ burger.bebidas }} -
                                                     {{ burger.qtdBebida }}</span></p>
                                         </div>
                                     </div>
@@ -212,8 +212,7 @@
                                             <div class="complementosContent">
                                                 <p class="titleDestaque">Complementos: </p>
                                                 <p>Guarnição: <span class="pontoC">{{ burger.acompanhamento }}</span></p>
-                                                <p>Bebidas: <span class="pontoC">{{ burger.bebidas }} - {{ burger.tipoBebida }}
-                                                        - {{ burger.qtdBebida }}</span></p>
+                                                <p>Bebidas: <span class="pontoC">{{ burger.bebidas }} - {{ burger.qtdBebida }}</span></p>
                                             </div>
                                         </div>
                                         <!-- Modal footer -->

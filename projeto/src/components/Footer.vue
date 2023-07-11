@@ -12,25 +12,22 @@ name: 'Footer'
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   footer{
-    background-color: #222;
+    background-color: var(--dark-alt);
     padding:20px;
-    border-radius: 10px 10px 0px 0px;
     height: 200px;
-    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    /* position: absolute; */
-  }
-  .containerFlexC{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  p{
-    color: #fff;
+    .containerFlexC{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    p{
+      color: #fff;
+    }
   }
 </style>

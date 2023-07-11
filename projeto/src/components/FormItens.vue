@@ -143,117 +143,120 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .painel {
     width: 32%;
     margin-right: 1em;
     margin-bottom: 1em;
-}
 
-.titleName i {
-    background-color: #FEB611;
-    color: #222;
-    padding: .2em;
-    border-radius: 5px;
-    margin-right: .5em;
-    width: 25px;
-    text-align: center;
-}
+    .titleName {
+        i {
+            background-color: var(--primary);
+            color: var(--dark);
+            padding: .2em;
+            border-radius: 5px;
+            margin-right: .5em;
+            width: 25px;
+            text-align: center;
+        }
+    }
 
-.ContentInput {
-    background-color: #222;
-    padding: 1em;
-    border-radius: 20px;
-    margin-bottom: 1em;
-    box-shadow: 2px 2px 7px -6px #000;
-}
+    .ContentInput {
+        background-color: var(--dark);
+        padding: 1em;
+        border-radius: 20px;
+        margin-bottom: 1em;
+        box-shadow: 2px 2px 7px -6px var(--dark-alt);
 
-.ContainerList {
-    background-color: #e9e9e9;
-    padding: 1em;
-    border-radius: 20px;
-    margin-bottom: 1em;
-    max-height: 260px;
-    min-height: 260px;
-    overflow-y: scroll;
-    box-shadow: 2px 2px 7px -6px #000;
-}
+        p {
+            font-size: 18px;
+            color: var(--light);
+            border-bottom: solid 2px #ffffff24;
+            padding-bottom: .5em;
+        }
 
+        .salvar {
+            background-color: var(--primary);
+            color: var(--dark);
+        }
+    }
 
+    .ContainerList {
+        background-color: #e9e9e9;
+        padding: 1em;
+        border-radius: 20px;
+        margin-bottom: 1em;
+        max-height: 260px;
+        min-height: 260px;
+        overflow-y: scroll;
+        box-shadow: 2px 2px 7px -6px var(--dark-alt);
 
-.ContentInput p {
-    font-size: 18px;
-    color: #fff;
-    border-bottom: solid 2px #ffffff24;
-    padding-bottom: .5em;
-}
+        .delete {
+            background-color: transparent;
+            color: rgb(238, 118, 118);
+            font-size: 20px;
+        }
 
-.btnF {
-    padding: .2em .4em;
-    border-radius: 5px;
-    border: none;
-    transition: .5s;
-}
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
 
-.btnF:hover {
-    filter: brightness(120%);
-    transform: scale(1.1);
-}
+        li {
+            background-color: #fff;
+            margin-bottom: 8px;
+            padding: .3em .5em;
+            border-radius: 5px;
 
+            .ContainerItem {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
 
-.salvar {
-    background-color: #FEB611;
-    color: #222;
-}
+                .itemNome {
+                    margin-bottom: 0px
+                }
 
-.delete {
-    background-color:transparent;
-    color: rgb(238, 118, 118);
-    font-size: 20px;
-}
+            }
 
-input {
-    border: none;
-    width: 100%;
-    border-radius: 5px;
-    padding-inline: .5em;
-    margin-right: .2em;
-}
-input:nth-child(2){
-    margin-left: .5em;
-}
+        }
+    }
 
-.inputs {
-    width: 75%;
-    margin-right: .5em;
-    display: flex;
-    justify-content: center;
-}
+    .btnF {
+        padding: .2em .4em;
+        border-radius: 5px;
+        border: none;
+        transition: .5s;
 
-.formContainer {
-    display: flex;
-}
+        &:hover {
+            filter: brightness(120%);
+            transform: scale(1.1);
+        }
+    }
 
-ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
+    .formContainer {
+        display: flex;
 
-li {
-    background-color: #fff;
-    margin-bottom: 8px;
-    padding: .3em .5em;
-    border-radius: 5px;
-}
+        .inputs {
+            width: 75%;
+            margin-right: .5em;
+            display: flex;
+            justify-content: center;
 
-.ContainerItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
+            input {
+                border: none;
+                width: 100%;
+                border-radius: 5px;
+                padding-inline: .5em;
+                margin-right: .2em;
 
-.itemNome {
-    margin-bottom: 0px
+                &:nth-child(2) {
+                    margin-left: .5em;
+                }
+            }
+        }
+
+    }
 }
 </style>
