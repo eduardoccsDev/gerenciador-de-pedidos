@@ -1,7 +1,7 @@
 <template>
   <div id="fetchAllForm">
-    <Message :msg="msg" v-show="msg"/>
-    <div>
+    <Message :msg="msg" :tipo="tipo" v-show="msg"/>
+    <div> 
         <form id="burgerForm" @submit.prevent="enviarDados">
             <div class="row">
                 <div class="inputContainer col">
@@ -108,7 +108,8 @@ export default {
             molhosN:[],
             acompanhamentosN:[],
             bebidasN:[],
-            msg: null
+            msg: null,
+            tipo: null
         }
     },
     methods:{
@@ -138,6 +139,7 @@ export default {
             axios.post('http://localhost:8800/burgers', dados)
             .then(response => {
                 this.msg = 'Pedido realizado com sucesso'
+                this.tipo = 'success'
                 setTimeout(()=> this.msg = "", 3000);
                 //limpar campos
                 this.nome="";

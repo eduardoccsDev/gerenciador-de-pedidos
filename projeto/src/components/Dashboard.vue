@@ -1,6 +1,6 @@
 <template>
     <div id="burgerTable">
-        <Message :msg="msg" v-show="msg" />
+        <Message :msg="msg" :tipo="tipo" v-show="msg" />
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button @click="getDados('http://localhost:8800/burgerss', 'burgersN')" class="nav-link active"
@@ -252,7 +252,8 @@ export default {
             burgersEP: [],
             statusN: [],
             timerStarted: false,
-            msg: null
+            msg: null,
+            tipo: null
         }
     },
     components: {
@@ -316,6 +317,7 @@ export default {
             axios.put(`http://localhost:8800/burgersc/${id}`, {concluido: concluido })
                 .then(response => {
                     this.msg = `Pedido  N° ${id} esta atrasado!`
+                    this.tipo = "alert"
                     setTimeout(() => this.msg = "", 3000);
                 })
                 .catch(error => {
@@ -331,6 +333,7 @@ export default {
             })
                 .then(response => {
                     this.msg = `Pedido  N° ${id} atualizado para ${novoStatus}`
+                    this.tipo = 'success'
                     setTimeout(() => this.msg = "", 3000);
                     this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
                 })
@@ -342,6 +345,7 @@ export default {
             axios.delete(`http://localhost:8800/burgers/${id}`)
                 .then(response => {
                     this.msg = `Pedido N° ${id} removido com sucesso!`
+                    this.tipo = 'success'
                     setTimeout(() => this.msg = "", 3000);
                     this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
                 })
