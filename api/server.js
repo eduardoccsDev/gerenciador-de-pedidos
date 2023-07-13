@@ -47,6 +47,7 @@ const statusRoutes = require('./routes/status')(connection);
 const burgerssRoutes = require('./routes/burgerss')(connection);
 const burgersepRoutes = require('./routes/burgersep')(connection);
 const burgerscRoutes = require('./routes/burgersc')(connection);
+const combosRoutes = require('./routes/combos')(connection);
 
 // Usar as rotas modularizadas
 app.use('/carnes', carnesRoutes);
@@ -61,6 +62,7 @@ app.use('/status', statusRoutes);
 app.use('/burgerss', burgerssRoutes);
 app.use('/burgersep', burgersepRoutes);
 app.use('/burgersc', burgerscRoutes);
+app.use('/combos', combosRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
