@@ -94,8 +94,8 @@ export default {
         return{
             nome: null,
             telefone: null,
-            pao: null,
-            carne: null,
+            pao: '',
+            carne: '',
             opcionais: [],
             pontocarnes: [],
             molhos:[],

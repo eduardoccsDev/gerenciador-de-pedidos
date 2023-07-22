@@ -22,6 +22,14 @@
                     Home
                 </span>
             </router-link>
+            <router-link to="/combos" class="buttonLink">
+                <span class="icons">
+                    <i class="fa-solid fa-layer-group"></i>
+                </span>
+                <span class="text">
+                    Combos
+                </span>
+            </router-link>
             <router-link to="/sobre" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-eye"></i>
