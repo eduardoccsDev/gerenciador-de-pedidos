@@ -12,6 +12,19 @@ module.exports = connection => {
             }
         });
     });
+    //get por id
+     router.get('/:id', (req, res) => {
+        const comboId = req.params.id;
+        const query = 'SELECT * FROM combos WHERE idcombo = ?';
+        connection.query(query,[comboId], (err, rows) => {
+            if (err) {
+                console.error('Erro ao executar a consulta (carnes):', err);
+                res.status(500).json({ error: 'Erro ao obter os dados do banco de dados (carnes)' });
+            } else {
+                res.json(rows);
+            }
+        });
+    });
     //Rota para enviar carne
     router.post('/', (req, res) => {
         const newItem = req.body; // Obtém os dados enviados no corpo da requisição
