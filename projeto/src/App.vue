@@ -66,7 +66,10 @@ h1{
   text-align: center;
   font-size: 42px;
   margin-bottom: 30px;
-  color: #222;
+  color: #fff;
+  background-color: var(--dark);
+  padding: .5em;
+  border-radius: 10px;
 }
 .grow-in-enter-from, .grow-in-leave-to{
   opacity: 0;

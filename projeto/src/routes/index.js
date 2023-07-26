@@ -5,7 +5,8 @@ const routes = [
   { path: '/', component: Home },
   { path: '/pedidos', component: ()=> import('../views/Pedidos.vue') },
   { path: '/administracao', component: ()=> import('../views/Administracao.vue') },
-  { path: '/combos', component: ()=> import('../views/Combos.vue') }
+  { path: '/combos', component: ()=> import('../views/Combos.vue') },
+  { path: '/editarCombo/:id', component: ()=> import('../views/editarCombo.vue') }
 ]
 
 const router = createRouter({

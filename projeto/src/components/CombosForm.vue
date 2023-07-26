@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div class="btnContainer">
-                <button type="submit" class="submitBtn"><i class="fa-solid fa-share"></i>Criar combo</button>
+                <button type="submit" class="submitBtn"><i class="fa-solid fa-share"></i>Salvar combo</button>
             </div>
         </form>
     </div>

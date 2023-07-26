@@ -2,8 +2,17 @@
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div class="combosContainer">
         <div v-for="combo in combosN" :key="combo.idcombo" class="cardCombo">
-            <div class="titleContainer">
-                <p class="comboName"><i class="fa-solid fa-layer-group"></i>{{ combo.nomeCombo }}</p>
+            <div class="cardHeader">
+                <div class="titleContainer">
+                    <p class="comboName"><i class="fa-solid fa-layer-group"></i>{{ combo.nomeCombo }}</p>
+                </div>
+                <div class="editContainer">
+                    <button class="btn edit" title="Editar">
+                        <router-link :to="'/editarCombo/'+combo.idcombo">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </router-link>
+                    </button>
+                </div>    
             </div>
             <div class="infosCombo">
                 <p class="valorCombo"><i class="fa-solid fa-brazilian-real-sign"></i>{{ formattedValue(combo.valorCombo) }}
@@ -26,7 +35,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ combo.nomeCombo }}</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ combo.nomeCombo }} - <span>R$ {{formattedValue(combo.valorCombo)}}</span></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -127,30 +136,50 @@ export default {
         margin-right: 2em;
         box-shadow: 0px 0px 8px -4px #0000008f;
         border-radius: 10px;
-        width: 300px;
+        width: 350px;
     }
-
-    .titleContainer {
-        margin-bottom: 1em;
-        background-color: var(--dark);
-        padding: .5em .3em;
-        border-radius: 5px;
-
-        .comboName {
-            margin-bottom: 0px;
-            color: #fff;
-
-            i {
-                margin-right: .5em;
+    .cardHeader{
+        display: flex;
+        justify-content: space-between;
+        .titleContainer {
+            margin-bottom: 1em;
+            background-color: var(--dark);
+            padding: .5em .3em;
+            border-radius: 5px;
+            width: 90%;
+            margin-right: .5em;
+    
+            .comboName {
+                margin-bottom: 0px;
+                color: #fff;
+    
+                i {
+                    margin-right: .5em;
+                    color: var(--dark);
+                    background-color: var(--primary);
+                    padding: .3em;
+                    border-radius: 5px;
+                    width: 30px;
+                    text-align: center;
+                }
+            }
+        }
+        .editContainer{
+            a{
                 color: var(--dark);
-                background-color: var(--primary);
-                padding: .3em;
-                border-radius: 5px;
-                width: 30px;
-                text-align: center;
+            }
+            .edit{
+                background-color: #00cfff;
+                transition: .5s;
+                padding: .5em .8em;
+                color: var(--dark);
+                &:hover{
+                    background-color: #007792;
+                }
             }
         }
     }
+
 
     .btnContainer {
         text-align: center;
@@ -203,6 +232,12 @@ export default {
             text-decoration: underline;
             font-size: 18px;
         }
+    }
+
+    .modal-dialog {
+        height: 90vh;
+        display: flex;
+        align-items: center;
     }
 }
 </style>
