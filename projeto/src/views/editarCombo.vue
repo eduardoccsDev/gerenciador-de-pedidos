@@ -74,7 +74,7 @@
                                     <div class="checkBoxContainer" v-for="opcional in opcionaisN"
                                         :key="opcional.idopcional">
                                         <input type="checkbox" :id="opcional.nomeOpcional" name="opcionais"
-                                            v-model="opcionais" :value="opcional.nomeOpcional">
+                                            v-model="combo.opcionais" :checked="combo.opcionais.includes(opcional.nomeOpcional)" :value="opcional.nomeOpcional">
                                         <label class="optionL" :for="opcional.nomeOpcional">{{ opcional.nomeOpcional
                                         }}</label>
                                     </div>
@@ -87,11 +87,11 @@
                                     <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN"
                                         :key="acompanhamento.idacompanhamento">
                                         <input type="checkbox" :id="acompanhamento.nomeAcompanhamento"
-                                            name="acompanhamentos" v-model="acompanhamentos"
-                                            :value="acompanhamento.nomeAcompanhamento">
+                                            name="acompanhamentos" v-model="combo.acompanhamentos"
+                                            :value="acompanhamento.nomeAcompanhamento"
+                                            :checked="combo.acompanhamentos.includes(acompanhamento.nomeAcompanhamento)">
                                         <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{
-                                            acompanhamento.nomeAcompanhamento }} - {{ acompanhamento.qtdAcompanhamento
-    }}</label>
+                                            acompanhamento.nomeAcompanhamento }} - {{ acompanhamento.qtdAcompanhamento }}</label>
                                     </div>
                                 </div>
                             </div>
@@ -100,8 +100,10 @@
                                     combo:</label>
                                 <div class="opcionaisContainer">
                                     <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
-                                        <input type="checkbox" :id="bebida.idbebida" name="bebida" v-model="bebidas"
-                                            :value="bebida.nomeBebida">
+                                        <input type="checkbox" :id="bebida.idbebida" name="bebida" v-model="combo.bebidas"
+                                            :value="bebida.nomeBebida"
+                                            :checked="combo.bebidas.includes(bebida.nomeBebida)"
+                                            >
                                         <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} -
                                             {{ bebida.qtdBebida }}</label>
                                     </div>
@@ -109,7 +111,8 @@
                             </div>
                         </div>
                         <div class="btnContainer">
-                            <button type="submit" class="submitBtn"><i class="fa-solid fa-share"></i>Atualizar combo</button>
+                            <button type="submit" class="submitBtn"><i class="fa-solid fa-share"></i>Atualizar
+                                combo</button>
                         </div>
                     </form>
                 </div>
@@ -163,13 +166,27 @@ export default {
     mounted() {
         this.comboId = this.$route.params.id;
         const baseUrl = 'http://localhost:8800';
-        this.getDados(`${baseUrl}/combos/${this.comboId}`, 'combosN');
-        this.getDados(`${baseUrl}/carnes`, 'carnesN');
-        this.getDados(`${baseUrl}/molhos`, 'molhosN');
-        this.getDados(`${baseUrl}/paes`, 'paesN');
-        this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
-        this.getDados(`${baseUrl}/bebidas`, 'bebidasN');
-        this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentosN');
+        this.getDados(`${baseUrl}/combos/${this.comboId}`, 'combosN')
+        .then(() => {
+            // Certifique-se de que cada combo tenha um array vazio caso não tenha opcionais ou acompanhamentos
+            this.combosN.forEach(combo => {
+                combo.opcionais = combo.opcionaisCombo ? this.itemList(combo.opcionaisCombo) : [];
+                combo.bebidas = combo.bebidaCombo ? this.itemList(combo.bebidaCombo) : [];
+                combo.acompanhamentos = combo.acompanhamentoCombo ? this.itemList(combo.acompanhamentoCombo) : [];
+            });
+
+            // Após garantir que os arrays opcionais e acompanhamentos estão definidos corretamente,
+            // carregue os dados dos demais itens
+            this.getDados(`${baseUrl}/carnes`, 'carnesN');
+            this.getDados(`${baseUrl}/molhos`, 'molhosN');
+            this.getDados(`${baseUrl}/paes`, 'paesN');
+            this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
+            this.getDados(`${baseUrl}/bebidas`, 'bebidasN');
+            this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentosN');
+        })
+        .catch(error => {
+            console.log('Erro ao obter os dados:', error);
+        });
     }
 }
 </script>
