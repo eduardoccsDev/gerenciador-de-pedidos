@@ -40,6 +40,21 @@ module.exports = connection => {
             }
         });
     });
+    //atualizar combo
+    router.put('/:id', (req, res) =>{
+        const comboId = req.params.id;
+        const updateData = req.body;
+
+        const query = 'UPDATE combos SET ? WHERE idcombo = ?';
+        connection.query(query, [updateData, comboId], (err, result) =>{
+            if(err){
+                console.error('Erro ao atualizar os dados do combo: ', err);
+                res.status(500).json({error: 'Erro ao atualizar os dados do combo no banco de dados'});
+            } else {
+                res.json({message: 'Dados do combo atualizados com sucesso'});
+            }
+        });
+    });
     //Rota para exlcuir carne
     router.delete('/:id', (req, res) => {
         const carneId = req.params.id;

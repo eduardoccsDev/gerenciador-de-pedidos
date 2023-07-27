@@ -39,28 +39,36 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <h3>Detalhes do combo:</h3>
-                            <p>Bebidas disponíveis</p>
-                            <ul class="listaAdcionais">
-                                <li v-for="(bebida, index) in itemList(combo.bebidaCombo)" :key="index">
-                                    {{ bebida }}
-                                </li>
-                            </ul>
-                            <p>Opcionais disponíveis</p>
-                            <ul class="listaAdcionais">
-                                <li v-for="(opcional, index) in itemList(combo.opcionaisCombo)" :key="index">
-                                    {{ opcional }}
-                                </li>
-                            </ul>
-                            <p>Acompanhamentos disponíveis</p>
-                            <ul class="listaAdcionais">
-                                <li v-for="(acompanhamento, index) in itemList(combo.acompanhamentoCombo)" :key="index">
-                                    {{ acompanhamento }}
-                                </li>
-                            </ul>
+                            <div class="detalhesContainer">
+                                <p  v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">Opcionais disponíveis</p>
+                                <ul class="listaAdcionais" v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">
+                                    <li v-for="(opcional, index) in itemList(combo.opcionaisCombo)" :key="index">
+                                        {{ opcional }}
+                                    </li>
+                                </ul>
+                                <span v-else>Não há opcionais disponíveis para este combo.</span>
+                            </div>
+                            <div class="detalhesContainer">
+                                <p v-if="combo.bebidaCombo && combo.bebidaCombo.length > 0">Bebidas disponíveis</p>
+                                <ul v-if="combo.bebidaCombo && combo.bebidaCombo.length > 0" class="listaAdcionais">
+                                    <li v-for="(bebida, index) in itemList(combo.bebidaCombo)" :key="index">
+                                        {{ bebida }}
+                                    </li>
+                                </ul>
+                                <span v-else>Não há bebidas disponíveis para este combo.</span>
+                            </div>
+                            <div class="detalhesContainer">
+                                <p v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0">Acompanhamentos disponíveis</p>
+                                <ul v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0" class="listaAdcionais">
+                                    <li v-for="(acompanhamento, index) in itemList(combo.acompanhamentoCombo)" :key="index">
+                                        {{ acompanhamento }}
+                                    </li>
+                                </ul>
+                                <span v-else>Não há acompanhamentos disponíveis para este combo.</span>
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btnFechar btn-secondary" data-bs-dismiss="modal">Fechar</button>
                         </div>
                     </div>
                 </div>
@@ -180,7 +188,6 @@ export default {
         }
     }
 
-
     .btnContainer {
         text-align: center;
         display: flex;
@@ -238,6 +245,31 @@ export default {
         height: 90vh;
         display: flex;
         align-items: center;
+    }
+    .modal-body{
+        .detalhesContainer{
+            background-color: #e9e9e9;
+            padding: .5em;
+            border-radius: 5px;
+            margin-bottom: .5em;
+
+            p{
+                border-bottom: solid 2px #c0c0c0;
+                padding-bottom: .2em;
+            }
+        }
+    }
+    .modal-footer{
+        .btnFechar{
+            background-color: rgb(253, 128, 128);
+            color: var(--dark);
+            border: none;
+            transition: .5s;
+
+            &:hover{
+                background-color: #D05B5B;
+            }
+        }
     }
 }
 </style>

@@ -90,7 +90,7 @@
                     <div class="opcionaisContainer">
                         <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
                             <input type="checkbox" :id="bebida.idbebida" name="bebida" v-model="bebidas"
-                                :value="bebida.nomeBebida">
+                                :value="bebida.nomeBebida + ' - ' + bebida.qtdBebida">
                             <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} -
                                 {{ bebida.qtdBebida }}</label>
                         </div>

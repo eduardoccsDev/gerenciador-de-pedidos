@@ -18,8 +18,7 @@ export default {
     },
     methods: {
         voltarPagina() {
-            const router = useRouter();
-            router.go(-1);
+            this.$router.go(-1);
         }
     }
 }

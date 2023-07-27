@@ -1,7 +1,8 @@
 <template>
+    <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div v-for="combo in combosN" :key="combo.idcombo" class="editContainer">
         <div class="comboFormContainer">
-            <form id="comboForm" @submit.prevent="atualizarDados">
+            <form id="comboForm" @submit.prevent="() => submitForm(combo)">
                 <div class="rowForm">
                     <div class="inputContainer">
                         <label>
@@ -114,8 +115,12 @@
 
 <script>
 import axios from 'axios';
+import Message from './Message.vue';
 export default {
     name: 'editComboForm',
+    components: {
+        Message
+    },
     data() {
         return {
             comboId: null,
@@ -126,14 +131,9 @@ export default {
             opcionaisN: [],
             acompanhamentosN: [],
             bebidasN: [],
-            nomeCombo: '',
-            valorCombo: '',
-            carne: '',
-            molho: '',
-            pao: '',
-            opcionais: [],
-            bebidas: [],
-            acompanhamentos: []
+           
+            msg: null,
+            tipo: null
         }
     },
     methods: {
@@ -148,6 +148,32 @@ export default {
         itemList(itemComboList) {
             return itemComboList.split(",");
         },
+        submitForm(combo) {
+            this.atualizarDados(combo);
+        },
+        async atualizarDados(combo) {
+            try {
+                const baseUrl = 'http://localhost:8800';
+                const comboData = {
+                    nomeCombo: combo.nomeCombo,
+                    valorCombo: combo.valorCombo,
+                    carneCombo: combo.carneCombo,
+                    molhoCombo: combo.molhoCombo,
+                    paoCombo: combo.paoCombo,
+                    opcionaisCombo: combo.opcionais.join(","),
+                    bebidaCombo: combo.bebidas.join(","),
+                    acompanhamentoCombo: combo.acompanhamentos.join(","),
+                };
+
+                await axios.put(`${baseUrl}/combos/${this.comboId}`, comboData);
+                this.msg = 'Combo atualizado com sucesso!'
+                this.tipo = "success"
+                setTimeout(() => this.msg = "", 3000);
+                console.log('Dados do combo atualizados com sucesso!');
+            } catch (error) {
+                console.log('Erro ao atualizar os dados do combo: ', error);
+            }
+        }
     },
     mounted() {
         this.comboId = this.$route.params.id;
