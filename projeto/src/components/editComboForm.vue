@@ -84,7 +84,7 @@
                             <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN"
                                 :key="acompanhamento.idacompanhamento">
                                 <input type="checkbox" :id="acompanhamento.nomeAcompanhamento" name="acompanhamentos"
-                                    v-model="combo.acompanhamentos" :value="acompanhamento.nomeAcompanhamento"
+                                    v-model="combo.acompanhamentos" :value="acompanhamento.nomeAcompanhamento + ' - ' + acompanhamento.qtdAcompanhamento"
                                     :checked="combo.acompanhamentos.includes(acompanhamento.nomeAcompanhamento)">
                                 <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{
                                     acompanhamento.nomeAcompanhamento }} - {{ acompanhamento.qtdAcompanhamento }}</label>
@@ -97,7 +97,7 @@
                         <div class="opcionaisContainer">
                             <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
                                 <input type="checkbox" :id="bebida.idbebida" name="bebida" v-model="combo.bebidas"
-                                    :value="bebida.nomeBebida" :checked="combo.bebidas.includes(bebida.nomeBebida)">
+                                    :value="bebida.nomeBebida + ' - ' + bebida.qtdBebida" :checked="combo.bebidas.includes(bebida.nomeBebida)">
                                 <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} -
                                     {{ bebida.qtdBebida }}</label>
                             </div>

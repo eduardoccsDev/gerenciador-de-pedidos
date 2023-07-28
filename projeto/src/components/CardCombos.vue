@@ -4,15 +4,15 @@
         <div v-for="combo in combosN" :key="combo.idcombo" class="cardCombo">
             <div class="cardHeader">
                 <div class="titleContainer">
-                    <p class="comboName"><i class="fa-solid fa-layer-group"></i>{{ combo.nomeCombo }}</p>
+                    <p class="comboName">{{ combo.nomeCombo }}</p>
                 </div>
-                <div class="editContainer">
-                    <button class="btn edit" title="Editar">
-                        <router-link :to="'/editarCombo/'+combo.idcombo">
+                <div v-if="adminFunctions" class="editContainer">
+                    <router-link :to="'/editarCombo/' + combo.idcombo">
+                        <button class="btn edit" title="Editar">
                             <i class="fa-solid fa-pen-to-square"></i>
-                        </router-link>
-                    </button>
-                </div>    
+                        </button>
+                    </router-link>
+                </div>
             </div>
             <div class="infosCombo">
                 <p class="valorCombo"><i class="fa-solid fa-brazilian-real-sign"></i>{{ formattedValue(combo.valorCombo) }}
@@ -25,9 +25,14 @@
                 <button type="button" class="btn abrirModal" data-bs-toggle="modal" :data-bs-target="'#' + combo.idcombo">
                     <i class="fa-solid fa-plus"></i> Detalhes
                 </button>
-                <button class="btn excluirCombo" @click="deletarCombo(combo.idcombo)">
+                <button v-if="adminFunctions" class="btn excluirCombo" @click="deletarCombo(combo.idcombo)">
                     <i class="fa-solid fa-trash-can"></i> Excluir
                 </button>
+                <router-link v-else :to="'/pedido/' + combo.idcombo">
+                    <button class="btn pedirCombo">
+                        <i class="fa-regular fa-circle-check"></i> Pedir
+                    </button>
+                </router-link>
             </div>
             <!-- Modal -->
             <div class="modal fade" :id="combo.idcombo" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -35,12 +40,13 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ combo.nomeCombo }} - <span>R$ {{formattedValue(combo.valorCombo)}}</span></h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ combo.nomeCombo }} - <span>R$
+                                    {{ formattedValue(combo.valorCombo) }}</span></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="detalhesContainer">
-                                <p  v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">Opcionais disponíveis</p>
+                                <p v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">Opcionais disponíveis</p>
                                 <ul class="listaAdcionais" v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">
                                     <li v-for="(opcional, index) in itemList(combo.opcionaisCombo)" :key="index">
                                         {{ opcional }}
@@ -58,8 +64,10 @@
                                 <span v-else>Não há bebidas disponíveis para este combo.</span>
                             </div>
                             <div class="detalhesContainer">
-                                <p v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0">Acompanhamentos disponíveis</p>
-                                <ul v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0" class="listaAdcionais">
+                                <p v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0">Acompanhamentos
+                                    disponíveis</p>
+                                <ul v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0"
+                                    class="listaAdcionais">
                                     <li v-for="(acompanhamento, index) in itemList(combo.acompanhamentoCombo)" :key="index">
                                         {{ acompanhamento }}
                                     </li>
@@ -68,7 +76,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btnFechar btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btnFechar btn-secondary"
+                                data-bs-dismiss="modal">Fechar</button>
                         </div>
                     </div>
                 </div>
@@ -90,6 +99,12 @@ export default {
             combosN: [],
             msg: null,
             tipo: null
+        }
+    },
+    props: {
+        adminFunctions: {
+            type: Boolean,
+            default: false,
         }
     },
     methods: {
@@ -146,42 +161,38 @@ export default {
         border-radius: 10px;
         width: 350px;
     }
-    .cardHeader{
+
+    .cardHeader {
         display: flex;
         justify-content: space-between;
+
         .titleContainer {
             margin-bottom: 1em;
             background-color: var(--dark);
             padding: .5em .3em;
             border-radius: 5px;
-            width: 90%;
-            margin-right: .5em;
-    
+            width: 100%;
+
             .comboName {
                 margin-bottom: 0px;
                 color: #fff;
-    
-                i {
-                    margin-right: .5em;
-                    color: var(--dark);
-                    background-color: var(--primary);
-                    padding: .3em;
-                    border-radius: 5px;
-                    width: 30px;
-                    text-align: center;
-                }
+                padding-inline: .3em;
             }
         }
-        .editContainer{
-            a{
+
+        .editContainer {
+            a {
                 color: var(--dark);
             }
-            .edit{
+
+            .edit {
                 background-color: #00cfff;
                 transition: .5s;
                 padding: .5em .8em;
                 color: var(--dark);
-                &:hover{
+                margin-left: .3em;
+
+                &:hover {
                     background-color: #007792;
                 }
             }
@@ -196,7 +207,6 @@ export default {
             background-color: var(--primary);
             width: 100%;
             transition: .5s;
-            margin-right: .3em;
 
             &:hover {
                 background-color: var(--primary-alt);
@@ -207,9 +217,27 @@ export default {
             background-color: rgb(253, 128, 128);
             width: 100%;
             transition: .5s;
+            margin-left: .3em;
 
             &:hover {
                 background-color: rgb(206, 89, 89);
+            }
+        }
+        a{
+           width: 100%;
+           text-decoration: none; 
+           &:hover{
+            color: var(--dark);
+           }
+        }
+        .pedirCombo {
+            background-color: #00cfff;
+            width: 100%;
+            transition: .5s;
+            margin-left: .3em;
+
+            &:hover {
+                background-color: #007792;
             }
         }
     }
@@ -246,27 +274,29 @@ export default {
         display: flex;
         align-items: center;
     }
-    .modal-body{
-        .detalhesContainer{
+
+    .modal-body {
+        .detalhesContainer {
             background-color: #e9e9e9;
             padding: .5em;
             border-radius: 5px;
             margin-bottom: .5em;
 
-            p{
+            p {
                 border-bottom: solid 2px #c0c0c0;
                 padding-bottom: .2em;
             }
         }
     }
-    .modal-footer{
-        .btnFechar{
+
+    .modal-footer {
+        .btnFechar {
             background-color: rgb(253, 128, 128);
             color: var(--dark);
             border: none;
             transition: .5s;
 
-            &:hover{
+            &:hover {
                 background-color: #D05B5B;
             }
         }

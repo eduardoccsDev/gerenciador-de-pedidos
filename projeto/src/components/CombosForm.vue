@@ -1,4 +1,5 @@
 <template>
+    <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div class="comboFormContainer">
         <form id="comboForm" @submit.prevent="enviarDados">
             <div class="rowForm">
@@ -78,7 +79,7 @@
                         <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN"
                             :key="acompanhamento.idacompanhamento">
                             <input type="checkbox" :id="acompanhamento.nomeAcompanhamento" name="acompanhamentos"
-                                v-model="acompanhamentos" :value="acompanhamento.nomeAcompanhamento">
+                                v-model="acompanhamentos" :value="acompanhamento.nomeAcompanhamento + ' - ' + acompanhamento.qtdAcompanhamento">
                             <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{
                                 acompanhamento.nomeAcompanhamento }} - {{ acompanhamento.qtdAcompanhamento }}</label>
                         </div>
@@ -106,8 +107,12 @@
 
 <script>
 import axios from 'axios';
+import Message from './Message.vue';
 export default {
     name: 'CombosForm',
+    components:{
+        Message
+    },
     data() {
         return {
             carnesN: [],
@@ -123,7 +128,9 @@ export default {
             pao: '',
             opcionais: [],
             bebidas: [],
-            acompanhamentos: []
+            acompanhamentos: [],
+            msg: null,
+            tipo: null
         }
     },
     methods: {

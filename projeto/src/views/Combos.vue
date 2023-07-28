@@ -1,25 +1,28 @@
 <template>
-    <div class="container">
-      <div class="main">
-        <h1>Combos:</h1>
-        <CardCombos/>
-        <ReturnBtn/>
-      </div>
+  <div class="container">
+    <div class="main">
+      <h1>Combos:</h1>
+      <CardCombos :admin-functions="isAdmin" />
+      <ReturnBtn />
     </div>
-  </template>
+  </div>
+</template>
   
-  <script>
-  import CardCombos from '../components/CardCombos.vue';
+<script>
+import CardCombos from '../components/CardCombos.vue';
 import ReturnBtn from '../components/returnBtn.vue';
-  export default {
-      name: 'Combos',
-      components:{
+export default {
+  name: 'Combos',
+  components: {
     CardCombos,
     ReturnBtn
-},
+  },
+  data(){
+    return{
+      isAdmin: true
+    }
   }
-  </script>
+}
+</script>
   
-  <style lang="scss" scoped>
-  
-  </style>
+<style lang="scss" scoped></style>

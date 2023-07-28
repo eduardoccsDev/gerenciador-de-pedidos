@@ -70,6 +70,7 @@ h1{
   background-color: var(--dark);
   padding: .5em;
   border-radius: 10px;
+  width: 100%;
 }
 .grow-in-enter-from, .grow-in-leave-to{
   opacity: 0;
@@ -78,5 +79,6 @@ h1{
 .grow-in-enter-active, .grow-in-leave.active{
   transition: 0.3s ease-out;
 }
+
 </style>
 
