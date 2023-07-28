@@ -2,43 +2,83 @@
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div v-for="combo in combosN" :key="combo.idcombo" class="editContainer">
         <div class="comboFormContainer">
-            <p>nome: {{ combo.nomeCombo }}</p>
-            <p>preço: {{ combo.valorCombo }}</p>
-            <p>carne: {{ combo.carneCombo }}</p>
-            <p>molho: {{ combo.molhoCombo }}</p>
-            <p>pão: {{ combo.paoCombo }}</p>
-            <p>descrição : Nosso maravilhoso combo {{ combo.nomeCombo }} vem com nosso delicioso blend de {{
-                combo.carneCombo }}
-                - 200g com nosso molho {{combo.molhoCombo}} e esta recheado com {{ combo.opcionaisCombo }} + um acompanhamento de sua escolha e uma bebida. </p>
+            <div class="descriptionContainer">
+                <p>Nosso maravilhoso combo <span>{{ combo.nomeCombo }}</span> vem com nosso delicioso blend de <span>{{
+                    combo.carneCombo }}
+                        - 200g</span> com nosso molho de <span>{{ combo.molhoCombo }}</span> e esta recheado com <span>{{
+                            combo.opcionaisCombo }}</span> e
+                    <span>{{ combo.paoCombo }}</span> + um acompanhamento de sua escolha e uma bebida.
+                </p>
+            </div>
             <form id="comboForm" @submit.prevent="() => submitForm(combo)">
                 <div class="rowForm">
                     <div class="inputContainer">
-                        <label for="acompanhamentos" id="acompanhamentoTitle"><i class="fa-solid fa-bowl-food"></i>
-                            Acompanhamento:</label>
-                        <div class="inputContainer">
-                            <select id="acompanhamento" name="acompanhamento" required v-model="acompanhamento">
-                                <option value="" selected disabled>Selecione o acompanhamento</option>
-                                <option v-for="acompanhamento in itemList(combo.acompanhamentoCombo)" :key="acompanhamento"
-                                    :value="acompanhamento">
-                                    {{ acompanhamento }}
-                                </option>
-                            </select>
-                        </div>
+                        <label for="acompanhamentos" id="acompanhamentoTitle">
+                            <i class="fa-solid fa-bowl-food"></i>
+                            Acompanhamento:
+                            <span>*</span>
+                        </label>
+                        <select id="acompanhamento" name="acompanhamento" required v-model="acompanhamento">
+                            <option value="" selected disabled>Selecione o acompanhamento</option>
+                            <option v-for="acompanhamento in itemList(combo.acompanhamentoCombo)" :key="acompanhamento"
+                                :value="acompanhamento">
+                                {{ acompanhamento }}
+                            </option>
+                        </select>
                     </div>
                     <div class="inputContainer">
-                        <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-beer-mug-empty"></i> Bebidas:</label>
-                        <div class="inputContainer">
-                            <select id="acompanhamento" name="acompanhamento" required v-model="bebida">
-                                <option value="" selected disabled>Selecione a bebida</option>
-                                <option v-for="bebida in itemList(combo.bebidaCombo)" :key="bebida" :value="bebida">
-                                    {{ bebida }}
-                                </option>
-                            </select>
-                        </div>
+                        <label for="bebida" id="bebidaTitle">
+                            <i class="fa-solid fa-beer-mug-empty"></i>
+                            Bebidas:
+                            <span>*</span>
+                        </label>
+                        <select id="acompanhamento" name="acompanhamento" required v-model="bebida">
+                            <option value="" selected disabled>Selecione a bebida</option>
+                            <option v-for="bebida in itemList(combo.bebidaCombo)" :key="bebida" :value="bebida">
+                                {{ bebida }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="rowForm">
+                    <div class="inputContainer">
+                        <label for="nomeCliente" id="nomeClienteTitle">
+                            <i class="fa-solid fa-user"></i>
+                            Seu nome:
+                            <span>*</span>
+                        </label>
+                        <input required id="nomeCliente" type="text" v-model="nomeCliente" placeholder="Digite seu nome">
+                    </div>
+                    <div class="inputContainer">
+                        <label for="telefoneCliente" id="telefoneClienteTitle">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            Seu whatsapp:
+                            <span>*</span>
+                        </label>
+                        <input required type="text" id="telefoneCliente" v-model="telefoneCliente"
+                            placeholder="Digite seu whatsapp">
+                    </div>
+                </div>
+                <div class="rowForm">
+                    <div class="inputContainer">
+                        <label for="infoAdicional" id="infoAdicionalTitle">
+                            <i class="fa-solid fa-info"></i>
+                            Informação adicional:
+                        </label>
+                        <textarea id="infoAdicional" v-model="infoAdicional" placeholder="Deixei alguma informação adicional"/>
                     </div>
                 </div>
                 <div class="btnContainer">
-                    <button type="submit" class="submitBtn"><i class="fa-regular fa-floppy-disk"></i>Realizar pedido</button>
+                    <div class="precoCombo">
+                        <p>
+                            <i class="fa-solid fa-brazilian-real-sign"></i>
+                            {{ formattedValue(combo.valorCombo) }}
+                        </p>
+                    </div>
+                    <button type="submit" class="submitBtn">
+                        <i class="fa-regular fa-floppy-disk"></i>
+                        Realizar pedido
+                    </button>
                 </div>
             </form>
         </div>
@@ -59,6 +99,9 @@ export default {
             acompanhamento: '',
             bebida: '',
             combosN: [],
+            nomeCliente: '',
+            telefoneCliente: '',
+            infoAdicional: '',
             msg: null,
             tipo: null
         }
@@ -128,8 +171,16 @@ export default {
                 return [];
             }
             return this.combo.acompanhamentoCombo.split(',');
-        }
-    }
+        },
+        formattedValue() {
+            return (value) => {
+                return `${value.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })},00`;
+            };
+        },
+    },
 }
 </script>
 
@@ -144,6 +195,22 @@ export default {
     padding: 1em;
     border-radius: 20px;
     margin-bottom: 2em;
+
+    .descriptionContainer {
+        background-color: #fff;
+        padding: .5em;
+        border-radius: 5px;
+        margin-bottom: 2em;
+
+        p {
+            margin-block: .5em;
+
+            span {
+                font-weight: 600;
+                color: var(--primary);
+            }
+        }
+    }
 
     .inputContainer {
         display: flex;
@@ -179,6 +246,15 @@ export default {
             color: var(--dark);
             background-color: #fff;
         }
+
+        textarea {
+            height: 150px;
+            border-radius: 5px;
+            border: none;
+            padding: .5em;
+            color: var(--dark);
+            background-color: #fff;
+        }
     }
 
     .btnContainer {
@@ -200,6 +276,19 @@ export default {
 
             i {
                 margin-right: .5em;
+            }
+        }
+
+        .precoCombo {
+            p {
+                background-color: var(--dark);
+                color: #fff;
+                padding: .5em;
+                font-size: 20px;
+                font-weight: 600;
+                border-radius: 5px;
+                margin: 0 auto;
+                margin-block: 1em;
             }
         }
 

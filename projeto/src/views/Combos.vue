@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="main">
-      <h1>Combos:</h1>
+      <h1>Painel de Combos:</h1>
       <CardCombos :admin-functions="isAdmin" />
       <ReturnBtn />
     </div>
