@@ -60,12 +60,25 @@
                     </div>
                 </div>
                 <div class="rowForm">
+                    <div class="inputContainer radioFlex">
+                        <div class="radioContainer">
+                            <input name="entrega" type="radio" id="Entrega" v-model="entrega">
+                            <label for="Entrega">Entrega</label>
+                        </div>
+                        <div class="radioContainer">
+                            <input name="entrega" type="radio" id="pegarPedido" v-model="entrega">
+                            <label for="pegarPedido">Retirar no local</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="rowForm">
                     <div class="inputContainer">
                         <label for="infoAdicional" id="infoAdicionalTitle">
                             <i class="fa-solid fa-info"></i>
                             Informação adicional:
                         </label>
-                        <textarea id="infoAdicional" v-model="infoAdicional" placeholder="Deixei alguma informação adicional"/>
+                        <textarea id="infoAdicional" v-model="infoAdicional"
+                            placeholder="Deixei alguma informação adicional" />
                     </div>
                 </div>
                 <div class="btnContainer">
@@ -76,7 +89,7 @@
                         </p>
                     </div>
                     <button type="submit" class="submitBtn">
-                        <i class="fa-regular fa-floppy-disk"></i>
+                        <i class="fa-solid fa-burger"></i>
                         Realizar pedido
                     </button>
                 </div>
@@ -88,10 +101,12 @@
 <script>
 import axios from 'axios';
 import Message from './Message.vue';
+import { VueInputMask } from 'vue-inputmask';
 export default {
     name: 'editComboForm',
     components: {
-        Message
+        Message,
+        VueInputMask
     },
     data() {
         return {
@@ -102,6 +117,7 @@ export default {
             nomeCliente: '',
             telefoneCliente: '',
             infoAdicional: '',
+            entrega: '',
             msg: null,
             tipo: null
         }
@@ -268,7 +284,7 @@ export default {
             color: var(--dark);
             border-radius: 5px;
             transition: .5s;
-            padding: .3em;
+            padding: .3em .5em;
 
             &:hover {
                 background-color: var(--light);
@@ -313,6 +329,17 @@ export default {
             }
         }
     }
+    .radioFlex{
+        display: flex;
+        flex-direction: row;
 
+        .radioContainer{
+            margin-right: 1em;
+
+            input{
+                margin-right: .5em;
+            }
+        }
+    }
 }
 </style>
