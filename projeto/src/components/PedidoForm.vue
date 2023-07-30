@@ -10,7 +10,7 @@
                     <span>{{ combo.paoCombo }}</span> + um acompanhamento de sua escolha e uma bebida.
                 </p>
             </div>
-            <form id="comboForm" @submit.prevent="() => submitForm(combo)">
+            <form id="comboForm" @submit.prevent="criarPedido(combo)">
                 <div class="rowForm">
                     <div class="inputContainer">
                         <label for="acompanhamentos" id="acompanhamentoTitle">
@@ -61,9 +61,10 @@
                 </div>
                 <div class="rowForm">
                     <div class="inputContainer radioFlex">
+                        <p>Opções de entrega</p>
                         <div class="radioContainer">
                             <input name="entrega" type="radio" id="Entrega" v-model="entrega">
-                            <label for="Entrega">Entrega</label>
+                            <label for="Entrega">Delivery</label>
                         </div>
                         <div class="radioContainer">
                             <input name="entrega" type="radio" id="pegarPedido" v-model="entrega">
@@ -102,6 +103,8 @@
 import axios from 'axios';
 import Message from './Message.vue';
 import { VueInputMask } from 'vue-inputmask';
+const dataAtual = new Date();
+const horario = dataAtual.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 export default {
     name: 'editComboForm',
     components: {
@@ -134,30 +137,34 @@ export default {
         itemList(itemComboList) {
             return itemComboList.split(",");
         },
-        submitForm(combo) {
-            this.atualizarDados(combo);
-        },
-        async atualizarDados(combo) {
+        async criarPedido(comboInfo) {
             try {
                 const baseUrl = 'http://localhost:8800';
                 const comboData = {
-                    nomeCombo: combo.nomeCombo,
-                    valorCombo: combo.valorCombo,
-                    carneCombo: combo.carneCombo,
-                    molhoCombo: combo.molhoCombo,
-                    paoCombo: combo.paoCombo,
-                    opcionaisCombo: combo.opcionais.join(","),
-                    bebidaCombo: combo.bebidas.join(","),
-                    acompanhamentoCombo: combo.acompanhamentos.join(","),
+                    nomeCliente: this.nomeCliente,
+                    telefoneCliente: this.telefoneCliente,
+                    horaPedido: horario,
+                    // nomeCombo: combo.nomeCombo,
+                    // valorCombo: combo.valorCombo,
+                    carne: comboInfo.carneCombo,
+                    molhos: comboInfo.molhoCombo,
+                    pao: comboInfo.paoCombo,
+                    pontoCarne: 'Ao ponto',
+                    opcionais: comboInfo.opcionaisCombo,
+                    bebidas: this.bebida,
+                    acompanhamento: this.acompanhamento,
                 };
 
-                await axios.put(`${baseUrl}/combos/${this.comboId}`, comboData);
-                this.msg = 'Combo atualizado com sucesso!'
+                await axios.post(`${baseUrl}/burgers`, comboData);
+                this.msg = 'Pedido realizado com sucesso!'
                 this.tipo = "success"
                 setTimeout(() => this.msg = "", 3000);
-                console.log('Dados do combo atualizados com sucesso!');
+                console.log('Pedido criado com sucesso!');
             } catch (error) {
-                console.log('Erro ao atualizar os dados do combo: ', error);
+                console.log('Erro ao criar o pedido: ', error);
+                this.msg = 'Erro ao criar o pedido!'
+                this.tipo = "alert"
+                setTimeout(() => this.msg = "", 3000);
             }
         }
     },
