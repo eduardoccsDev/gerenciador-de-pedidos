@@ -13,6 +13,25 @@
             <form id="comboForm" @submit.prevent="criarPedido(combo)">
                 <div class="rowForm">
                     <div class="inputContainer">
+                        <label for="nomeCliente" id="nomeClienteTitle">
+                            <i class="fa-solid fa-user"></i>
+                            Seu nome:
+                            <span>*</span>
+                        </label>
+                        <input required id="nomeCliente" type="text" v-model="nomeCliente" placeholder="Digite seu nome">
+                    </div>
+                    <div class="inputContainer">
+                        <label for="telefoneCliente" id="telefoneClienteTitle">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            Seu whatsapp:
+                            <span>*</span>
+                        </label>
+                        <input required type="text" id="telefoneCliente" v-model="telefoneCliente"
+                            placeholder="Digite seu whatsapp">
+                    </div>
+                </div>
+                <div class="rowForm">
+                    <div class="inputContainer">
                         <label for="acompanhamentos" id="acompanhamentoTitle">
                             <i class="fa-solid fa-bowl-food"></i>
                             Acompanhamento:
@@ -42,33 +61,32 @@
                 </div>
                 <div class="rowForm">
                     <div class="inputContainer">
-                        <label for="nomeCliente" id="nomeClienteTitle">
-                            <i class="fa-solid fa-user"></i>
-                            Seu nome:
+                        <label for="bebida" id="bebidaTitle">
+                            <i class="fa-solid fa-fire"></i>
+                            Ponto da carne:
                             <span>*</span>
                         </label>
-                        <input required id="nomeCliente" type="text" v-model="nomeCliente" placeholder="Digite seu nome">
+                        <select id="pontoCarne" name="pontoCarne" required v-model="pontoCarne">
+                            <option value="" selected disabled>Selecione o ponto da carne</option>
+                            <option v-for="pontoCarne in pontoCarneN" :key="pontoCarne.idpontoCarne" :value="pontoCarne.nomePontoCarne">
+                                {{ pontoCarne.nomePontoCarne }}
+                            </option>
+                        </select>
                     </div>
                     <div class="inputContainer">
-                        <label for="telefoneCliente" id="telefoneClienteTitle">
-                            <i class="fa-brands fa-whatsapp"></i>
-                            Seu whatsapp:
-                            <span>*</span>
+                        <label>
+                            <i class="fa-solid fa-parachute-box"></i>
+                            Opções de entrega
                         </label>
-                        <input required type="text" id="telefoneCliente" v-model="telefoneCliente"
-                            placeholder="Digite seu whatsapp">
-                    </div>
-                </div>
-                <div class="rowForm">
-                    <div class="inputContainer radioFlex">
-                        <p>Opções de entrega</p>
-                        <div class="radioContainer">
-                            <input name="entrega" type="radio" id="Entrega" v-model="entrega">
-                            <label for="Entrega">Delivery</label>
-                        </div>
-                        <div class="radioContainer">
-                            <input name="entrega" type="radio" id="pegarPedido" v-model="entrega">
-                            <label for="pegarPedido">Retirar no local</label>
+                        <div class="radioFlex">
+                            <div class="radioContainer">
+                                <input name="entrega" type="radio" id="Entrega" v-model="entrega">
+                                <label for="Entrega">Delivery</label>
+                            </div>
+                            <div class="radioContainer">
+                                <input name="entrega" type="radio" id="pegarPedido" v-model="entrega">
+                                <label for="pegarPedido">Retirar no local</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -117,7 +135,9 @@ export default {
             acompanhamento: '',
             bebida: '',
             combosN: [],
+            pontoCarneN:[],
             nomeCliente: '',
+            pontoCarne: '',
             telefoneCliente: '',
             infoAdicional: '',
             entrega: '',
@@ -144,12 +164,14 @@ export default {
                     nomeCliente: this.nomeCliente,
                     telefoneCliente: this.telefoneCliente,
                     horaPedido: horario,
-                    // nomeCombo: combo.nomeCombo,
-                    // valorCombo: combo.valorCombo,
+                    nomeCombo: comboInfo.nomeCombo,
+                    valorCombo: comboInfo.valorCombo,
+                    tipoEntrega: this.entrega,
+                    infoAdicional: this.infoAdicional,
                     carne: comboInfo.carneCombo,
                     molhos: comboInfo.molhoCombo,
                     pao: comboInfo.paoCombo,
-                    pontoCarne: 'Ao ponto',
+                    pontoCarne: this.pontoCarne,
                     opcionais: comboInfo.opcionaisCombo,
                     bebidas: this.bebida,
                     acompanhamento: this.acompanhamento,
@@ -171,6 +193,7 @@ export default {
     mounted() {
         this.comboId = this.$route.params.id;
         const baseUrl = 'http://localhost:8800';
+        this.getDados(`${baseUrl}/pontocarne`, 'pontoCarneN');
         this.getDados(`${baseUrl}/combos/${this.comboId}`, 'combosN')
             .then(() => {
                 // Certifique-se de que cada combo tenha um array vazio caso não tenha opcionais ou acompanhamentos
@@ -336,14 +359,15 @@ export default {
             }
         }
     }
-    .radioFlex{
+
+    .radioFlex {
         display: flex;
         flex-direction: row;
 
-        .radioContainer{
+        .radioContainer {
             margin-right: 1em;
 
-            input{
+            input {
                 margin-right: .5em;
             }
         }
