@@ -152,14 +152,15 @@ export default {
 <style scoped lang="scss">
 .combosContainer {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
     .cardCombo {
         padding: 1em;
-        margin-bottom: 1em;
-        margin-right: 2em;
+        margin-bottom: 2em;
         box-shadow: 0px 0px 8px -4px #0000008f;
         border-radius: 10px;
-        width: 350px;
+        width: 400px;
     }
 
     .cardHeader {
@@ -223,13 +224,16 @@ export default {
                 background-color: rgb(206, 89, 89);
             }
         }
-        a{
-           width: 100%;
-           text-decoration: none; 
-           &:hover{
-            color: var(--dark);
-           }
+
+        a {
+            width: 100%;
+            text-decoration: none;
+
+            &:hover {
+                color: var(--dark);
+            }
         }
+
         .pedirCombo {
             background-color: #00cfff;
             width: 100%;
@@ -301,5 +305,4 @@ export default {
             }
         }
     }
-}
-</style>
+}</style>
