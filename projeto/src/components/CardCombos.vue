@@ -161,6 +161,11 @@ export default {
         box-shadow: 0px 0px 8px -4px #0000008f;
         border-radius: 10px;
         width: 400px;
+        background-color: var(--light);
+
+        @media(max-width: 468px) {
+            width: 100%;
+        }
     }
 
     .cardHeader {
@@ -305,4 +310,5 @@ export default {
             }
         }
     }
-}</style>
+}
+</style>

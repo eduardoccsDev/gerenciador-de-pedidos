@@ -8,6 +8,11 @@
   width: 1280px;
   margin: auto; 
 }
+@media(max-width:468px){
+  .container{
+    width: 100%;
+  }
+}
 body{
-  background-color: #f9f9f9;
+  background-color: #f1f1f1;
 }

@@ -31,9 +31,7 @@ import Sidebar from './components/Sidebar.vue'
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-body{
-  background-color: var(--light);
-}
+
 button{
   cursor: pointer;
   appearance: none;
