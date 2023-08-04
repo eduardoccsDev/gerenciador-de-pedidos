@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="statusContainer">
-            <select name="status" @change="updateBurger($event, burger.idburger, sufixoUrl, ArrayName)">
+            <select name="status" @change="updateBurger($event, burger.idburger)">
                 <option v-for="s in statusN" :key="s.idstatus" :value="s.nomeStatus"
                     :selected="burger.status == s.nomeStatus">{{ s.nomeStatus }}</option>
             </select>
@@ -37,6 +37,50 @@
                 Cancelar
             </button>
         </div>
+        <!-- Modal -->
+        <div class="modal fade" :id="burger.idburger" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">{{ burger.nomeCombo }} - <span>R$
+                                {{ formattedValue(burger.valorCombo) }}</span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="detalhesContainer">
+                            <p v-if="burger.opcionais && burger.opcionais.length > 0">Opcionais do combo</p>
+                            <ul class="listaAdcionais" v-if="burger.opcionais && burger.opcionais.length > 0">
+                                <li v-for="(opcional, index) in itemList(burger.opcionais)" :key="index">
+                                    {{ opcional }}
+                                </li>
+                            </ul>
+                            <span v-else>Não há opcionais disponíveis para este combo.</span>
+                        </div>
+                        <div class="detalhesContainer">
+                            <p v-if="burger.bebidas && burger.bebidas.length > 0">Bebida escolhida</p>
+                            <ul v-if="burger.bebidas && burger.bebidas.length > 0" class="listaAdcionais">
+                                <li v-for="(bebida, index) in itemList(burger.bebidas)" :key="index">
+                                    {{ bebida }}
+                                </li>
+                            </ul>
+                            <span v-else>Não há bebidas disponíveis para este combo.</span>
+                        </div>
+                        <div class="detalhesContainer">
+                            <p v-if="burger.acompanhamento && burger.acompanhamento.length > 0">Acompanhamento escolhido</p>
+                            <ul v-if="burger.acompanhamento && burger.acompanhamento.length > 0" class="listaAdcionais">
+                                <li v-for="(acompanhamento, index) in itemList(burger.acompanhamento)" :key="index">
+                                    {{ acompanhamento }}
+                                </li>
+                            </ul>
+                            <span v-else>Não há acompanhamentos disponíveis para este combo.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btnFechar btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -49,11 +93,16 @@ export default {
             type: Array,
             default: []
         },
-        ArrayName:{
+        ArrayName: {
             type: String
         },
-        sufixoUrl:{
+        sufixoUrl: {
             type: String
+        }
+    },
+    watch: {
+        burgersN(newVal, oldVal) {
+            this.$emit('burgers-updated', newVal);
         }
     },
     data() {
@@ -67,10 +116,6 @@ export default {
             timerStarted: false,
 
         }
-    },
-    components: {
-        
-
     },
     methods: {
         getDados(url, propriedade) {
@@ -87,21 +132,21 @@ export default {
 
             axios.put(`http://localhost:8800/burgersc/${id}`, { concluido: concluido })
                 .then(response => {
-                    
+
                 })
                 .catch(error => {
                     console.error('Erro ao concluir o pedido:', error);
                 });
         },
-        updateBurger(event, id, sufixo, arrayNome) {
+        updateBurger(event, id) {
             const novoStatus = event.target.value;
 
             axios.put(`http://localhost:8800/burgers/${id}`, {
-                status: novoStatus,
-                ...(novoStatus === 'Solicitado' ? { concluido: 0 } : {})
+                status: novoStatus
             })
                 .then(response => {
-                    this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
+                    // this.getDados('http://localhost:8800/burgerss', 'burgersN');
+                    // this.getDados('http://localhost:8800/burgersep', 'burgersEP');
                 })
                 .catch(error => {
                     console.error('Erro ao atualizar o status:', error);
@@ -110,17 +155,31 @@ export default {
         deleteBurger(id, sufixo, arrayNome) {
             axios.delete(`http://localhost:8800/burgers/${id}`)
                 .then(response => {
-                    
+
                     this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
                 })
                 .catch(error => {
                     console.error('Erro ao excluir o pedido:', error);
                 });
-        }
+        },
+        itemList(itemComboList) {
+            return itemComboList.split(",");
+        },
+    },
+    computed: {
+        formattedValue() {
+            return (value) => {
+                return `${value.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })},00`;
+            };
+        },
     },
     mounted() {
         this.getDados('http://localhost:8800/status', 'statusN');
-    }
+    },
+    emits: ['burgers-updated'],
 }
 </script>
 
@@ -188,12 +247,64 @@ export default {
             width: 100%;
             background-color: #fff;
             border: solid 1px #1a1a1a5e;
+            border-radius: 5px;
+            margin-bottom: .5em;
+            padding-inline: .5em;
         }
     }
 
     .cardFooter {
+        display: flex;
+        justify-content: space-between;
+
+        .btn {
+            width: 180px;
+            transition: .5s;
+
+            &:hover {
+                filter: brightness(80%);
+            }
+        }
+
         .detalhes {
             background-color: #00cfff;
+        }
+
+        .deleteBtn {
+            background-color: rgb(253, 128, 128);
+        }
+    }
+
+    .modal-dialog {
+        height: 90vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .modal-body {
+        .detalhesContainer {
+            background-color: #e9e9e9;
+            padding: .5em;
+            border-radius: 5px;
+            margin-bottom: .5em;
+
+            p {
+                border-bottom: solid 2px #c0c0c0;
+                padding-bottom: .2em;
+            }
+        }
+    }
+
+    .modal-footer {
+        .btnFechar {
+            background-color: rgb(253, 128, 128);
+            color: var(--dark);
+            border: none;
+            transition: .5s;
+
+            &:hover {
+                background-color: #D05B5B;
+            }
         }
     }
 }
