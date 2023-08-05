@@ -81,6 +81,7 @@ export default {
 .solicitadosContainer {
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 2em;
 }
 
 .sectionTitle {

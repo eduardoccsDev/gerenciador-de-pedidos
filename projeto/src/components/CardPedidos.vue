@@ -1,5 +1,5 @@
 <template>
-    <div class="cardSolicitado" v-for="burger in query" :key="burger.idburger">
+    <div v-if="paginatedQuery != ''" class="cardSolicitado" v-for="burger in paginatedQuery" :key="burger.idburger">
         <div class="headerCard">
             <div class="pedidoCode">
                 <p>Pedido N° {{ burger.idburger }}</p>
@@ -66,7 +66,8 @@
                             <span v-else>Não há bebidas disponíveis para este combo.</span>
                         </div>
                         <div class="detalhesContainer">
-                            <p v-if="burger.acompanhamento && burger.acompanhamento.length > 0">Acompanhamento escolhido</p>
+                            <p v-if="burger.acompanhamento && burger.acompanhamento.length > 0">Acompanhamento escolhido
+                            </p>
                             <ul v-if="burger.acompanhamento && burger.acompanhamento.length > 0" class="listaAdcionais">
                                 <li v-for="(acompanhamento, index) in itemList(burger.acompanhamento)" :key="index">
                                     {{ acompanhamento }}
@@ -81,6 +82,17 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div v-else class="msgVazio">
+        <p class="msgText">Não há pedidos neste status!</p>
+    </div>
+    <div class="pagination">
+        <button v-if="currentPage > 1" @click="changePage(currentPage - 1)">&lt;</button>
+        <button v-for="pageNumber in pageNumbers" :key="pageNumber" @click="changePage(pageNumber)"
+            :class="{ currentPage: pageNumber === currentPage }">
+            {{ pageNumber }}
+        </button>
+        <button v-if="currentPage < totalPages" @click="changePage(currentPage + 1)">&gt;</button>
     </div>
 </template>
 
@@ -114,6 +126,8 @@ export default {
             burgersEP: [],
             statusN: [],
             timerStarted: false,
+            currentPage: 1,
+            itemsPerPage: 6,
 
         }
     },
@@ -145,8 +159,6 @@ export default {
                 status: novoStatus
             })
                 .then(response => {
-                    // this.getDados('http://localhost:8800/burgerss', 'burgersN');
-                    // this.getDados('http://localhost:8800/burgersep', 'burgersEP');
                 })
                 .catch(error => {
                     console.error('Erro ao atualizar o status:', error);
@@ -165,6 +177,9 @@ export default {
         itemList(itemComboList) {
             return itemComboList.split(",");
         },
+        changePage(pageNumber) {
+            this.currentPage = pageNumber;
+        }
     },
     computed: {
         formattedValue() {
@@ -175,9 +190,27 @@ export default {
                 })},00`;
             };
         },
+        totalPages() {
+            return Math.ceil(this.query.length / this.itemsPerPage);
+        },
+        paginatedQuery() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.query.slice(start, end);
+        },
+        pageNumbers() {
+            const pageNumbers = [];
+            let i = 1;
+            while (i <= this.totalPages) {
+                pageNumbers.push(i);
+                i++;
+            }
+            return pageNumbers;
+        }
     },
     mounted() {
         this.getDados('http://localhost:8800/status', 'statusN');
+
     },
     emits: ['burgers-updated'],
 }
@@ -240,6 +273,16 @@ export default {
         margin-block: .5em;
         display: flex;
         justify-content: space-between;
+        .pessoalInfo{
+            a{
+                text-decoration: none;
+                color: var(--primary-alt);
+                transition: .5s;
+                &:hover{
+                    color: var(--dark);
+                }
+            }
+        }
     }
 
     .statusContainer {
@@ -305,6 +348,42 @@ export default {
             &:hover {
                 background-color: #D05B5B;
             }
+        }
+    }
+
+}
+
+.msgVazio{
+    width: 100%;
+    text-align: center;
+    padding: 1em;
+    .msgText{
+        background-color: #ffb81157;
+        padding: 1em;
+        border-radius: 10px;
+        font-size: 18px;
+        color: var(--dark);
+    }
+}
+
+.pagination {
+    display: block;
+    width: 100%;
+    text-align: center;
+
+    button {
+        background-color: var(--primary);
+        color: var(--dark);
+        padding: .5em;
+        margin-right: .3em;
+        border-radius: 5px;
+        width: 44px;
+        font-size: 18px;
+        transition: .5s;
+
+        &:hover,
+        &.currentPage {
+            filter: brightness(80%);
         }
     }
 }

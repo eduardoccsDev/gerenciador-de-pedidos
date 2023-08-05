@@ -19,21 +19,23 @@
         </div>
         <div class="ContainerList">
             <ul>
-                <li v-for="item in arrayDados" :key="'item.' + idItem">
-                    <div class="ContainerItem">
-                        <p class="itemNome">
-                            {{ item[dadoParaEnvio] }}
-                            <span v-if="dadoParaEnvio2 !== ''" class="infoSecundaria">
-                                - {{ item[dadoParaEnvio2] }}
-                            </span>
-                        </p>
-                        <div class="btns">
-                            <button @click="deletarItem(item[idItem])" class="btnF delete">
-                                <i class="fa-regular fa-circle-xmark"></i>
-                            </button>
+                <TransitionGroup name="fade" class="container">
+                    <li v-for="item in arrayDados" :key="'item.' + idItem">
+                        <div class="ContainerItem">
+                            <p class="itemNome">
+                                {{ item[dadoParaEnvio] }}
+                                <span v-if="dadoParaEnvio2 !== ''" class="infoSecundaria">
+                                    - {{ item[dadoParaEnvio2] }}
+                                </span>
+                            </p>
+                            <div class="btns">
+                                <button @click="deletarItem(item[idItem])" class="btnF delete">
+                                    <i class="fa-regular fa-circle-xmark"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                </TransitionGroup>
             </ul>
         </div>
     </div>
@@ -258,5 +260,25 @@ export default {
         }
 
     }
+}
+
+/* 1. declare transition */
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. declare enter from and leave to state */
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. ensure leaving items are taken out of layout flow so that moving
+      animations can be calculated correctly. */
+.fade-leave-active {
+    position: absolute;
 }
 </style>
