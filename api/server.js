@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 8800;
@@ -16,6 +17,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
 
 // Configurar a conexão com o banco de dados SQL
 const connection = mysql.createConnection({
@@ -48,6 +50,7 @@ const burgerssRoutes = require('./routes/burgerss')(connection);
 const burgersepRoutes = require('./routes/burgersep')(connection);
 const burgerscRoutes = require('./routes/burgersc')(connection);
 const combosRoutes = require('./routes/combos')(connection);
+const usersRoutes = require('./routes/user')(connection);
 
 // Usar as rotas modularizadas
 app.use('/carnes', carnesRoutes);
@@ -63,6 +66,7 @@ app.use('/burgerss', burgerssRoutes);
 app.use('/burgersep', burgersepRoutes);
 app.use('/burgersc', burgerscRoutes);
 app.use('/combos', combosRoutes);
+app.use('/user', usersRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {

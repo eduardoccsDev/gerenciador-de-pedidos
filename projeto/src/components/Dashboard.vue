@@ -14,7 +14,7 @@
 
 <script>
 import CardPedidos from './CardPedidos.vue';
-import Message from './Message.vue';
+import Message from './message.vue';
 import axios from 'axios';
 
 export default {

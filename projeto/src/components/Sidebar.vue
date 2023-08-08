@@ -2,8 +2,10 @@
     <aside :class="`${is_expanded && 'is-expanded'}`">
         <div class="logo">
             <router-link to="/">
-                <img src="/img/logo_circle_t.png" alt="logo">
+                <img v-if="currentUser && currentUser.photoURL" :src="currentUser.photoURL" alt="UserPhoto">
+                <img v-else src="/img/logo_circle_t.png" alt="logo">
             </router-link>
+            <h3  v-if="currentUser && currentUser.displayName" class="currentName">Olá {{currentUser.displayName}}</h3>
         </div>
         <div class="menu-toggle-wrap">
             <button class="menu-toggle" @click="ToggleMenu">
@@ -14,7 +16,7 @@
         </div>
         <h3>Menu</h3>
         <div class="menu">
-            <router-link to="/" class="buttonLink">
+            <router-link to="/dashboard" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-house"></i>
                 </span>
@@ -65,6 +67,14 @@
         </div>
         <div class="flex"></div>
         <div class="menu">
+            <button @click="handleSingOut" v-if="isLoggedIn" class="buttonLink">
+                <span class="icons">
+                    <i class="fa-solid fa-arrow-right-from-bracket fa-rotate-180"></i>
+                </span>
+                <span class="text">
+                    Sair
+                </span>
+            </button>
             <router-link to="/configurações" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-gear"></i>
@@ -78,14 +88,38 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
+const router = useRouter();
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true")
-
 const ToggleMenu = () => {
     is_expanded.value = !is_expanded.value
     localStorage.setItem("is_expanded", is_expanded.value)
 }
+
+const isLoggedIn = ref(false);
+const currentUser = ref(null);
+let auth;
+onMounted(()=>{
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if(user) {
+            isLoggedIn.value = true;
+            currentUser.value = user;
+        } else {
+            isLoggedIn.value = false;
+        }
+    });
+});
+
+const handleSingOut = () =>{
+    signOut(auth).then(()=>{
+        router.push('/');
+    });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -105,12 +139,17 @@ aside {
         flex: 1 1 0;
     }
     .logo {
+        
         margin-bottom: 1rem;
 
         img {
             width: 2.5rem;
             background-color: var(--light);
             border-radius: 100%;
+        }
+        .currentName{
+            margin-bottom: 0;
+            margin-top: 1em;
         }
     }
     .menu-toggle-wrap {
@@ -178,6 +217,9 @@ aside {
             &.router-link-exact-active {
                 border-right: 3px solid var(--primary);
             }
+        }
+        button{
+            width: 100%;
         }
     }
     &.is-expanded {
