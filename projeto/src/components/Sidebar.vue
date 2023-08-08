@@ -1,7 +1,7 @@
 <template>
     <aside :class="`${is_expanded && 'is-expanded'}`">
         <div class="logo">
-            <router-link to="/">
+            <router-link to="/dashboard">
                 <img v-if="currentUser && currentUser.photoURL" :src="currentUser.photoURL" alt="UserPhoto">
                 <img v-else src="/img/logo_circle_t.png" alt="logo">
             </router-link>
@@ -111,6 +111,7 @@ onMounted(()=>{
             currentUser.value = user;
         } else {
             isLoggedIn.value = false;
+            currentUser.value = null;
         }
     });
 });

@@ -3,6 +3,7 @@
     <p class="msgSistema">
       <i class="fa-solid fa-check"></i> Seja bem vindo,
       <span v-if="currentUser && currentUser.displayName">{{ currentUser.displayName }}</span>
+      <span v-else>aproveite.</span>
     </p>
   </Transition>
   <Sidebar />
@@ -17,8 +18,8 @@
 </template>
 
 <script>
-import Footer from './components/Footer.vue'
-import Sidebar from './components/Sidebar.vue'
+import Footer from './components/Footer.vue';
+import Sidebar from './components/sidebar.vue';
 import { getAuth } from 'firebase/auth';
 export default {
   components: { Footer, Sidebar },

@@ -25,7 +25,7 @@ export default {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.currentUser = user; // Atualize currentUser com os dados do usuário
-        console.log(user);
+        // console.log(user);
       }
     });
   },

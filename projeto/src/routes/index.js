@@ -4,13 +4,13 @@ import Login from '../views/Login.vue';
 
 const routes = [
   { path: '/', component: Login },
-  { path: '/registrar', component: () => import('../views/Registrar.vue')},
+  { path: '/cadastrar', component: () => import('../views/Cadastro.vue') },
 
-  { 
-    path: '/dashboard', 
+  {
+    path: '/dashboard',
     component: () => import('../views/Home.vue'),
-    meta:{
-      requiresAuth:true,
+    meta: {
+      requiresAuth: true,
     }
   },
 
@@ -18,11 +18,11 @@ const routes = [
   { path: '/pedidos', component: () => import('../views/Pedidos.vue') },
   { path: '/pedido/:id', component: () => import('../views/Pedido.vue') },
   { path: '/administracao', component: () => import('../views/Administracao.vue') },
-  { 
-    path: '/combos', 
+  {
+    path: '/combos',
     component: () => import('../views/Combos.vue'),
-    meta:{
-      requiresAuth:true,
+    meta: {
+      requiresAuth: true,
     }
   },
   { path: '/editarCombo/:id', component: () => import('../views/editarCombo.vue') }
@@ -33,11 +33,11 @@ const router = createRouter({
   routes,
 });
 
-const getCurrentUser = () =>{
+const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
     const removeListener = onAuthStateChanged(
       getAuth(),
-      (user) =>{
+      (user) => {
         removeListener();
         resolve(user);
       },
@@ -46,16 +46,16 @@ const getCurrentUser = () =>{
   });
 };
 
-router.beforeEach(async(to, from, next) => {
-  if(to.matched.some((record)=> record.meta.requiresAuth)){
-    if(await getCurrentUser()){
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (await getCurrentUser()) {
       next();
-    } else{
+    } else {
       // alert('Você deve esta logado!');
       next('/');
     }
 
-  }else{
+  } else {
     next();
   }
 });
