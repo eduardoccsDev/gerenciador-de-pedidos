@@ -14,9 +14,9 @@
                 </span>
             </button>
         </div>
-        <h3>Menu</h3>
+        <h3 v-if="isLoggedIn" >Menu</h3>
         <div class="menu">
-            <router-link to="/dashboard" class="buttonLink">
+            <router-link  v-if="isLoggedIn" to="/dashboard" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-house"></i>
                 </span>
@@ -24,7 +24,7 @@
                     Home
                 </span>
             </router-link>
-            <router-link to="/combos" class="buttonLink">
+            <router-link  v-if="isLoggedIn" to="/combos" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-layer-group"></i>
                 </span>
@@ -32,7 +32,7 @@
                     Combos
                 </span>
             </router-link>
-            <router-link to="/sobre" class="buttonLink">
+            <router-link v-if="isLoggedIn" to="/sobre" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-eye"></i>
                 </span>
@@ -40,7 +40,7 @@
                     Sobre
                 </span>
             </router-link>
-            <router-link to="/pedidos" class="buttonLink">
+            <router-link  v-if="isLoggedIn" to="/pedidos" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-boxes-stacked"></i>
                 </span>
@@ -48,7 +48,7 @@
                     Pedidos
                 </span>
             </router-link>
-            <router-link to="/administracao" class="buttonLink">
+            <router-link  v-if="isLoggedIn" to="/administracao" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-gears"></i>
                 </span>
@@ -56,7 +56,7 @@
                     Administração
                 </span>
             </router-link>
-            <router-link to="/contato" class="buttonLink">
+            <router-link v-if="isLoggedIn" to="/contato" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-address-book"></i>
                 </span>
@@ -75,7 +75,7 @@
                     Sair
                 </span>
             </button>
-            <router-link to="/configurações" class="buttonLink">
+            <router-link v-if="isLoggedIn" to="/configurações" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-gear"></i>
                 </span>
