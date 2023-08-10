@@ -1,9 +1,10 @@
 <template>
   <Transition v-show="msg" name="slide" mode="out-in">
     <p class="msgSistema">
-      <i class="fa-solid fa-check"></i> Seja bem vindo,
-      <span v-if="currentUser && currentUser.displayName">{{ currentUser.displayName }}</span>
-      <span v-else>aproveite.</span>
+      <i class="fa-solid fa-check"></i> Seja bem vindo
+      <span v-if="currentUser && currentUser.displayName">,{{ currentUser.displayName }}</span>
+      <span v-else-if="storeName">{{ storeName }}</span>
+      <span v-else> aproveite.</span>
     </p>
   </Transition>
   <Sidebar />
@@ -21,22 +22,39 @@
 import Footer from './components/Footer.vue';
 import Sidebar from './components/sidebar.vue';
 import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, get } from 'firebase/database';
 export default {
   components: { Footer, Sidebar },
   data() {
     return {
       currentUser: null,
-      msg: false
+      msg: false,
+      storeName: null
     };
   },
   created() {
     const auth = getAuth();
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
-        this.currentUser = user; // Atualize currentUser com os dados do usuário
+        this.currentUser = user;
+
+        // Recupere os dados do usuário do nó "users"
+        const db = getDatabase();
+        const userRef = ref(db, 'users/' + user.uid);
+        const snapshot = await get(userRef);
+        const userData = snapshot.val();
+
+        if (userData && userData.function === 'store') {
+          // Se o usuário é uma loja, recupere o storeName do nó "stores"
+          const storesRef = ref(db, 'stores/' + user.uid);
+          const storeSnapshot = await get(storesRef);
+
+          if (storeSnapshot.exists()) {
+            this.storeName = storeSnapshot.val().storeName;
+          }
+        }
         this.msg = true;
         setTimeout(() => this.msg = false, 3000);
-        console.log(user);
       }
     });
   },

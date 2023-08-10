@@ -129,6 +129,11 @@ const registerUserInDatabase = (user, userFunction, nameStore) => {
 
     if (userFunction === 'store') {
         userData.nameStore = nameStore;
+        // Adicionar o nome da loja ao nó "stores"
+        const storesRef = dbRef(db, 'stores/' + uid);
+        set(storesRef, { 
+            storeName: nameStore 
+        });
     }
 
     set(userRef, userData);
