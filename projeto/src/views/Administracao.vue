@@ -16,32 +16,27 @@
                     Administração:
                 </h1>
                 <div class="opcoesContainer">
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/carnes"
-                        :arrayDados="carnesN" sufixo="carnes" arrayNome="carnesN" idItem="idcarne" dadoParaEnvio="nomeCarne"
-                        indicativoInput="Digite o nome da carne" titulo="Adicionar carne a lista:"
-                        icon="fa-solid fa-burger" />
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/paes" :arrayDados="paesN"
-                        sufixo="paes" arrayNome="paesN" idItem="idpao" dadoParaEnvio="nomePao"
-                        indicativoInput="Digite o nome do pão" titulo="Adicionar pão a lista:"
-                        icon="fa-solid fa-bread-slice" />
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/molhos"
-                        :arrayDados="molhosN" sufixo="molhos" arrayNome="molhosN" idItem="idmolho" dadoParaEnvio="nomeMolho"
-                        indicativoInput="Digite o nome do molho" titulo="Adicionar molho a lista:"
-                        icon="fa-solid fa-droplet" />
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/opcionais"
-                        :arrayDados="opcionaisN" sufixo="opcionais" arrayNome="opcionaisN" idItem="idopcional"
-                        dadoParaEnvio="nomeOpcional" indicativoInput="Digite o nome do opcional"
+                    <FormItens :arrayDados="productStockData" :itemType="'nomeCarne'" arrayNome="productStockData"
+                        idItem="idcarne" dadoParaEnvio="nomeCarne" indicativoInput="Digite o nome da carne"
+                        titulo="Adicionar carne a lista:" icon="fa-solid fa-burger" />
+                    <FormItens :arrayDados="productStockData" :itemType="'nomePao'" arrayNome="productStockData"
+                        idItem="idpao" dadoParaEnvio="nomePao" indicativoInput="Digite o nome do pão"
+                        titulo="Adicionar pão a lista:" icon="fa-solid fa-bread-slice" />
+                    <FormItens :arrayDados="productStockData" :itemType="'nomeMolho'" arrayNome="productStockData"
+                        idItem="idmolho" dadoParaEnvio="nomeMolho" indicativoInput="Digite o nome do molho"
+                        titulo="Adicionar molho a lista:" icon="fa-solid fa-droplet" />
+                    <FormItens :arrayDados="productStockData" :itemType="'nomeOpcional'" arrayNome="productStockData"
+                        idItem="idopcional" dadoParaEnvio="nomeOpcional" indicativoInput="Digite o nome do opcional"
                         titulo="Adicionar opcional a lista:" icon="fa-solid fa-plus" />
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/acompanhamentos"
-                        :arrayDados="acompanhamentoN" sufixo="acompanhamentos" arrayNome="acompanhamentoN"
-                        idItem="idacompanhamento" dadoParaEnvio="nomeAcompanhamento" dadoParaEnvio2="qtdAcompanhamento"
-                        indicativoInput="Digite o nome do acompanhamento" indicativoInput2="Qtd do item"
-                        titulo="Adicionar acompanhamento a lista:" icon="fa-solid fa-bowl-food" modelo="2" />
-                    <FormItens @axios-success="handleAxiosSuccess" urlApi="http://localhost:8800/bebidas"
-                        :arrayDados="bebidasN" sufixo="bebidas" arrayNome="bebidasN" idItem="idbebida"
-                        dadoParaEnvio="nomeBebida" dadoParaEnvio2="qtdBebida" indicativoInput="Digite o nome da bebida"
-                        indicativoInput2="Qtd do item" titulo="Adicionar bebida a lista:" icon="fa-solid fa-beer-mug-empty"
-                        modelo="2" />
+                    <FormItens :arrayDados="productStockData" :itemType="'nomeAcompanhamento'" :itemComplement="'qtdItem'"
+                        arrayNome="productStockData" idItem="idacompanhamento" dadoParaEnvio="nomeAcompanhamento"
+                        dadoParaEnvio2="qtdItem" indicativoInput="Digite o nome do acompanhamento"
+                        indicativoInput2="Qtd do item" titulo="Adicionar acompanhamento a lista:"
+                        icon="fa-solid fa-bowl-food" modelo="2" />
+                    <FormItens :arrayDados="productStockData" :itemType="'nomeBebida'" :itemComplement="'qtdItem'"
+                        arrayNome="productStockData" idItem="idbebida" dadoParaEnvio="nomeBebida" dadoParaEnvio2="qtdBebida"
+                        indicativoInput="Digite o nome da bebida" indicativoInput2="Qtd do item"
+                        titulo="Adicionar bebida a lista:" icon="fa-solid fa-beer-mug-empty" modelo="2" />
                 </div>
             </div>
         </div>
@@ -51,7 +46,8 @@
 <script>
 import FormItens from '../components/FormItens.vue';
 import CombosForm from '../components/CombosForm.vue';
-import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, get } from 'firebase/database';
 export default {
     name: "Administracao",
     components: {
@@ -60,23 +56,28 @@ export default {
     },
     data() {
         return {
-            carnesN: [],
-            paesN: [],
-            molhosN: [],
-            opcionaisN: [],
-            acompanhamentoN: [],
-            bebidasN: []
+            currentUser: null,
+            productStockData: null
         };
     },
     methods: {
-        getDados(url, propriedade) {
-            axios.get(url)
-                .then(response => {
-                    this[propriedade] = response.data;
-                })
-                .catch(error => {
-                    console.log('Erro ao obter os dados:', error);
-                });
+        async getProductStockData() {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            if (user) {
+                const db = getDatabase();
+                const productStockRef = ref(db, `stores/${user.uid}/productStock`);
+
+                try {
+                    const snapshot = await get(productStockRef);
+                    if (snapshot.exists()) {
+                        this.productStockData = snapshot.val();
+                        // console.log('Dados do productStock:', this.productStockData); 
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter dados do productStock:', error);
+                }
+            }
         },
         handleAxiosSuccess(sufixo, nomeDoArray) {
             const baseUrl = 'http://localhost:8800';
@@ -89,14 +90,16 @@ export default {
             console.log('parentProp foi alterada:', newValue, oldValue);
         }
     },
+    computed: {
+        filteredProductStockData() {
+            if (this.productStockData && this.itemType) {
+                return this.productStockData[this.itemType] || [];
+            }
+            return [];
+        }
+    },
     mounted() {
-        const baseUrl = 'http://localhost:8800';
-        this.getDados(`${baseUrl}/carnes`, 'carnesN');
-        this.getDados(`${baseUrl}/paes`, 'paesN');
-        this.getDados(`${baseUrl}/molhos`, 'molhosN');
-        this.getDados(`${baseUrl}/bebidas`, 'bebidasN');
-        this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
-        this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentoN');
+        this.getProductStockData();
     }
 
 }

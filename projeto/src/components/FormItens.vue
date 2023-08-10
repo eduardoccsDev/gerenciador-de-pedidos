@@ -20,16 +20,19 @@
         <div class="ContainerList">
             <ul>
                 <TransitionGroup name="fade" class="container">
-                    <li v-for="item in arrayDados" :key="'item.' + idItem">
+                    <li v-for="(item, index) in dynamicArray" :key="index">
                         <div class="ContainerItem">
-                            <p class="itemNome">
-                                {{ item[dadoParaEnvio] }}
-                                <span v-if="dadoParaEnvio2 !== ''" class="infoSecundaria">
-                                    - {{ item[dadoParaEnvio2] }}
+                            <p v-if="dadoParaEnvio2 === ''" class="itemNome">
+                                {{ item }}
+                            </p>
+                            <p v-else class="itemNome">
+                                {{ item.name }}
+                                <span class="infoSecundaria">
+                                    - {{ item.qtdItem }}
                                 </span>
                             </p>
                             <div class="btns">
-                                <button @click="deletarItem(item[idItem])" class="btnF delete">
+                                <button @click="deletarItem(index)" class="btnF delete">
                                     <i class="fa-regular fa-circle-xmark"></i>
                                 </button>
                             </div>
@@ -42,7 +45,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, update, get, off } from 'firebase/database';
 export default {
     name: "FormItens",
     props: {
@@ -50,17 +54,15 @@ export default {
             type: String,
             required: true
         },
-        urlApi: {
-            type: String,
-            required: true
-        },
         arrayDados: {
-            type: Array,
+            type: Object,
             default: () => []
         },
-        sufixo: {
-            type: String,
-            required: true
+        itemType: {
+            type: String
+        },
+        itemComplement: {
+            type: String
         },
         idItem: {
             type: String,
@@ -102,43 +104,91 @@ export default {
     data() {
         return {
             itemF: null,
-            itemG: null
+            itemG: null,
         }
     },
     methods: {
-        deletarItem(id) {
-            axios.delete(this.urlApi + '/' + id)
-                .then(response => {
-                    this.$emit('axios-success', this.sufixo, this.arrayNome);
-                })
-                .catch(error => {
-                    console.error('Erro ao excluir o item:', error);
-                });
-        },
-        addItem() {
+        async addItem() {
+            const auth = getAuth();
+            const user = auth.currentUser;
 
-            let dados = {
-                [this.dadoParaEnvio]: this.itemF
-            };
+            if (user && user.uid) {
+                const db = getDatabase();
+                const storeProductRef = ref(db, `stores/${user.uid}/productStock`);
 
-            if (this.itemG !== null && this.itemG !== "") {
-                dados = {
-                    ...dados,
-                    [this.dadoParaEnvio2]: this.itemG
-                };
+                // Obtenha a lista atual do nó
+                let currentData = (await get(storeProductRef)).val() || {};
+
+                // Verifique se a categoria já existe no objeto currentData
+                if (!currentData[this.dadoParaEnvio]) {
+                    currentData[this.dadoParaEnvio] = [];
+                }
+
+                // Adicione o novo item à lista da categoria
+                if (this.modelo === '2') {
+                    // Se o modelo for 2, adicione os dados para envio 2
+                    currentData[this.dadoParaEnvio].push({
+                        name: this.itemF,
+                        qtdItem: this.itemG
+                    });
+                } else {
+                    // Se o modelo não for 2, adicione apenas o dado para envio 1
+                    currentData[this.dadoParaEnvio].push(this.itemF);
+                }
+
+                // Atualize o nó com os dados atualizados
+                await update(storeProductRef, currentData);
+
+                // Realize uma nova solicitação para obter os dados atualizados
+                const updatedData = (await get(storeProductRef)).val() || {};
+
+                // Atualize o array de dados com os dados obtidos
+                this.arrayDados[this.itemType] = updatedData[this.itemType] || [];
+
             }
-            // requisição POST
-            axios.post(this.urlApi, dados)
-                .then(response => {
-                    this.$emit('axios-success', this.sufixo, this.arrayNome);
-                    this.itemF = "";
-                    this.itemG = "";
-                })
-                .catch(error => {
-                    console.log('Erro ao enviar os dados:', error);
-                })
-        },
 
+            // Emita um evento de sucesso após a operação
+            this.$emit('axios-success', this.sufixo, this.arrayNome);
+            this.itemF = "";
+            this.itemG = "";
+        },
+        async deletarItem(index) {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (user && user.uid) {
+                const db = getDatabase();
+                const storeProductRef = ref(db, `stores/${user.uid}/productStock`);
+
+                // Obtenha a lista atual do nó
+                let currentData = (await get(storeProductRef)).val() || {};
+
+                // Verifique se a categoria existe no objeto currentData
+                if (currentData[this.dadoParaEnvio]) {
+                    // Remova o item do array de acordo com o índice
+                    currentData[this.dadoParaEnvio].splice(index, 1);
+
+                    // Atualize o nó com os dados atualizados
+                    await update(storeProductRef, currentData);
+
+                    // Realize uma nova solicitação para obter os dados atualizados
+                    const updatedData = (await get(storeProductRef)).val() || {};
+
+                    // Atualize o array de dados com os dados obtidos
+                    this.arrayDados[this.itemType] = updatedData[this.itemType] || [];
+                }
+            }
+        }
+
+
+    },
+    computed: {
+        dynamicArray() {
+            if (this.arrayDados && this.itemType) {
+                return this.arrayDados[this.itemType] || [];
+            }
+            return [];
+        }
     },
 
 
