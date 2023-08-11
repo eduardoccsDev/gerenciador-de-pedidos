@@ -17,24 +17,23 @@
                 </h1>
                 <div class="opcoesContainer">
                     <FormItens :arrayDados="productStockData" :itemType="'nomeCarne'" arrayNome="productStockData"
-                        idItem="idcarne" dadoParaEnvio="nomeCarne" indicativoInput="Digite o nome da carne"
-                        titulo="Adicionar carne a lista:" icon="fa-solid fa-burger" />
+                        dadoParaEnvio="nomeCarne" indicativoInput="Digite o nome da carne" titulo="Adicionar carne a lista:"
+                        icon="fa-solid fa-burger" />
                     <FormItens :arrayDados="productStockData" :itemType="'nomePao'" arrayNome="productStockData"
-                        idItem="idpao" dadoParaEnvio="nomePao" indicativoInput="Digite o nome do pão"
-                        titulo="Adicionar pão a lista:" icon="fa-solid fa-bread-slice" />
+                        dadoParaEnvio="nomePao" indicativoInput="Digite o nome do pão" titulo="Adicionar pão a lista:"
+                        icon="fa-solid fa-bread-slice" />
                     <FormItens :arrayDados="productStockData" :itemType="'nomeMolho'" arrayNome="productStockData"
-                        idItem="idmolho" dadoParaEnvio="nomeMolho" indicativoInput="Digite o nome do molho"
-                        titulo="Adicionar molho a lista:" icon="fa-solid fa-droplet" />
+                        dadoParaEnvio="nomeMolho" indicativoInput="Digite o nome do molho" titulo="Adicionar molho a lista:"
+                        icon="fa-solid fa-droplet" />
                     <FormItens :arrayDados="productStockData" :itemType="'nomeOpcional'" arrayNome="productStockData"
-                        idItem="idopcional" dadoParaEnvio="nomeOpcional" indicativoInput="Digite o nome do opcional"
+                        dadoParaEnvio="nomeOpcional" indicativoInput="Digite o nome do opcional"
                         titulo="Adicionar opcional a lista:" icon="fa-solid fa-plus" />
                     <FormItens :arrayDados="productStockData" :itemType="'nomeAcompanhamento'" :itemComplement="'qtdItem'"
-                        arrayNome="productStockData" idItem="idacompanhamento" dadoParaEnvio="nomeAcompanhamento"
-                        dadoParaEnvio2="qtdItem" indicativoInput="Digite o nome do acompanhamento"
-                        indicativoInput2="Qtd do item" titulo="Adicionar acompanhamento a lista:"
-                        icon="fa-solid fa-bowl-food" modelo="2" />
+                        arrayNome="productStockData" dadoParaEnvio="nomeAcompanhamento" dadoParaEnvio2="qtdItem"
+                        indicativoInput="Digite o nome do acompanhamento" indicativoInput2="Qtd do item"
+                        titulo="Adicionar acompanhamento a lista:" icon="fa-solid fa-bowl-food" modelo="2" />
                     <FormItens :arrayDados="productStockData" :itemType="'nomeBebida'" :itemComplement="'qtdItem'"
-                        arrayNome="productStockData" idItem="idbebida" dadoParaEnvio="nomeBebida" dadoParaEnvio2="qtdBebida"
+                        arrayNome="productStockData" dadoParaEnvio="nomeBebida" dadoParaEnvio2="qtdBebida"
                         indicativoInput="Digite o nome da bebida" indicativoInput2="Qtd do item"
                         titulo="Adicionar bebida a lista:" icon="fa-solid fa-beer-mug-empty" modelo="2" />
                 </div>

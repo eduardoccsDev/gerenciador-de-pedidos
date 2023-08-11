@@ -64,10 +64,6 @@ export default {
         itemComplement: {
             type: String
         },
-        idItem: {
-            type: String,
-            required: true
-        },
         dadoParaEnvio: {
             type: String,
             required: true

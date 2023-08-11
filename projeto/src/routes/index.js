@@ -55,23 +55,26 @@ const routes = [
   {
     path: '/pedidos',
     component: () => import('../views/Pedidos.vue'),
-    meta: {
-      requiresAuth: true,
-    }
+    // meta: {
+    //   requiresAuth: true,
+    // }
+    beforeEnter: checkStoreFunction
   },
   {
     path: '/pedido/:id',
     component: () => import('../views/Pedido.vue'),
-    meta: {
-      requiresAuth: true,
-    }
+    // meta: {
+    //   requiresAuth: true,
+    // }
+    beforeEnter: checkStoreFunction
   },
   {
     path: '/administracao',
     component: () => import('../views/Administracao.vue'),
-    meta: {
-      requiresAuth: true,
-    }
+    // meta: {
+    //   requiresAuth: true,
+    // }
+    beforeEnter: checkStoreFunction
   },
   {
     path: '/combos',
@@ -84,9 +87,10 @@ const routes = [
   {
     path: '/editarCombo/:id',
     component: () => import('../views/editarCombo.vue'),
-    meta: {
-      requiresAuth: true,
-    }
+    // meta: {
+    //   requiresAuth: true,
+    // }
+    beforeEnter: checkStoreFunction
   }
 ]
 
