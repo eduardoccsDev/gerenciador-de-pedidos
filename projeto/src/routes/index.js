@@ -63,10 +63,9 @@ const routes = [
   {
     path: '/pedido/:id',
     component: () => import('../views/Pedido.vue'),
-    // meta: {
-    //   requiresAuth: true,
-    // }
-    beforeEnter: checkStoreFunction
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/administracao',

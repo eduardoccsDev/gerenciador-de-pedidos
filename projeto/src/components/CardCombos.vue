@@ -1,13 +1,13 @@
 <template>
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div class="combosContainer">
-        <div v-for="combo in combosN" :key="combo.idcombo" class="cardCombo">
+        <div v-for="(item, index) in myData" :key="index" class="cardCombo">
             <div class="cardHeader">
                 <div class="titleContainer">
-                    <p class="comboName">{{ combo.nomeCombo }}</p>
+                    <p class="comboName">{{ item.nameCombo }}</p>
                 </div>
                 <div v-if="adminFunctions" class="editContainer">
-                    <router-link :to="'/editarCombo/' + combo.idcombo">
+                    <router-link :to="'/editarCombo/'+ item.key">
                         <button class="btn edit" title="Editar">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
@@ -15,60 +15,59 @@
                 </div>
             </div>
             <div class="infosCombo">
-                <p class="valorCombo"><i class="fa-solid fa-brazilian-real-sign"></i>{{ formattedValue(combo.valorCombo) }}
+                <p class="valorCombo"><i class="fa-solid fa-brazilian-real-sign"></i>{{ formattedValue(item.priceCombo) }}
                 </p>
-                <p><i class="fa-solid fa-burger"></i>{{ combo.carneCombo }}</p>
-                <p><i class="fa-solid fa-bread-slice"></i>{{ combo.paoCombo }}</p>
-                <p><i class="fa-solid fa-droplet"></i>{{ combo.molhoCombo }}</p>
+                <p><i class="fa-solid fa-burger"></i>{{ item.hamburger_meat }}</p>
+                <p><i class="fa-solid fa-bread-slice"></i>{{ item.bread }}</p>
+                <p><i class="fa-solid fa-droplet"></i>{{ item.sauce }}</p>
             </div>
             <div class="btnContainer">
-                <button type="button" class="btn abrirModal" data-bs-toggle="modal" :data-bs-target="'#' + combo.idcombo">
+                <button type="button" class="btn abrirModal" data-bs-toggle="modal" :data-bs-target="'#modal-' + index">
                     <i class="fa-solid fa-plus"></i> Detalhes
                 </button>
-                <button v-if="adminFunctions" class="btn excluirCombo" @click="deletarCombo(combo.idcombo)">
+                <button v-if="adminFunctions" class="btn excluirCombo" @click="deleteCombo(item.key)">
                     <i class="fa-solid fa-trash-can"></i> Excluir
                 </button>
-                <router-link v-else :to="'/pedido/' + combo.idcombo">
+                <router-link v-else :to="'/pedido/'+ item.key">
                     <button class="btn pedirCombo">
                         <i class="fa-regular fa-circle-check"></i> Pedir
                     </button>
                 </router-link>
             </div>
             <!-- Modal -->
-            <div class="modal fade" :id="combo.idcombo" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div class="modal fade" :id="'modal-' + index" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ combo.nomeCombo }} - <span>R$
-                                    {{ formattedValue(combo.valorCombo) }}</span></h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ item.nameCombo }} - <span>R$
+                                    {{ formattedValue(item.priceCombo) }}</span></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="detalhesContainer">
-                                <p v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">Opcionais disponíveis</p>
-                                <ul class="listaAdcionais" v-if="combo.opcionaisCombo && combo.opcionaisCombo.length > 0">
-                                    <li v-for="(opcional, index) in itemList(combo.opcionaisCombo)" :key="index">
+                                <p v-if="item.optional && item.optional.length > 0">Opcionais disponíveis</p>
+                                <ul class="listaAdcionais" v-if="item.optional && item.optional.length > 0">
+                                    <li v-for="(opcional, index) in item.optional" :key="index">
                                         {{ opcional }}
                                     </li>
                                 </ul>
                                 <span v-else>Não há opcionais disponíveis para este combo.</span>
                             </div>
                             <div class="detalhesContainer">
-                                <p v-if="combo.bebidaCombo && combo.bebidaCombo.length > 0">Bebidas disponíveis</p>
-                                <ul v-if="combo.bebidaCombo && combo.bebidaCombo.length > 0" class="listaAdcionais">
-                                    <li v-for="(bebida, index) in itemList(combo.bebidaCombo)" :key="index">
+                                <p v-if="item.drinks && item.drinks.length > 0">Bebidas disponíveis</p>
+                                <ul v-if="item.drinks && item.drinks.length > 0" class="listaAdcionais">
+                                    <li v-for="(bebida, index) in item.drinks" :key="index">
                                         {{ bebida }}
                                     </li>
                                 </ul>
                                 <span v-else>Não há bebidas disponíveis para este combo.</span>
                             </div>
                             <div class="detalhesContainer">
-                                <p v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0">Acompanhamentos
+                                <p v-if="item.accompaniments && item.accompaniments.length > 0">Acompanhamentos
                                     disponíveis</p>
-                                <ul v-if="combo.acompanhamentoCombo && combo.acompanhamentoCombo.length > 0"
-                                    class="listaAdcionais">
-                                    <li v-for="(acompanhamento, index) in itemList(combo.acompanhamentoCombo)" :key="index">
+                                <ul v-if="item.accompaniments && item.accompaniments.length > 0" class="listaAdcionais">
+                                    <li v-for="(acompanhamento, index) in item.accompaniments" :key="index">
                                         {{ acompanhamento }}
                                     </li>
                                 </ul>
@@ -87,67 +86,94 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { ref } from 'vue';
 import Message from './Message.vue';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref as dbRef, get, remove } from 'firebase/database';
+
 export default {
     name: 'CardCombos',
     components: {
-        Message
-    },
-    data() {
-        return {
-            combosN: [],
-            msg: null,
-            tipo: null
-        }
+        Message,
     },
     props: {
         adminFunctions: {
             type: Boolean,
             default: false,
-        }
+        },
     },
-    methods: {
-        async getDados(url, propriedade) {
-            try {
-                const response = await axios.get(url);
-                this[propriedade] = response.data;
-            } catch (error) {
-                console.log('Erro ao obter os dados:', error);
-            }
-        },
-        itemList(itemComboList) {
-            return itemComboList.split(",");
-        },
-        deletarCombo(id) {
-            axios.delete(`http://localhost:8800/combos/${id}`)
-                .then(response => {
-                    this.msg = `Combo N° ${id} removido com sucesso!`
-                    this.tipo = 'success'
-                    setTimeout(() => this.msg = "", 3000);
-                    this.getDados('http://localhost:8800/combos', 'combosN');
+    setup(props) {
+        const msg = ref(null);
+        const tipo = ref(null);
+        const myData = ref({});
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user && user.uid) {
+            const db = getDatabase();
+            const productStockRef = dbRef(db, `stores/${user.uid}/availableCombos`);
+
+            get(productStockRef)
+                .then((snapshot) => {
+                    snapshot.forEach((childSnapshot) => {
+                        const comboId = childSnapshot.key;
+                        const comboData = childSnapshot.val();
+                        myData.value[comboId] = { ...comboData, key: comboId };
+                    });
                 })
-                .catch(error => {
-                    console.error('Erro ao excluir o pedido:', error);
+                .catch((error) => {
+                    console.log('Erro ao obter os dados:', error);
                 });
         }
+
+        const deleteCombo = (comboKey) => {
+            if (user && user.uid) {
+                const db = getDatabase();
+                const comboRef = dbRef(
+                    db,
+                    `stores/${user.uid}/availableCombos/${comboKey}`
+                );
+
+                remove(comboRef)
+                    .then(() => {
+                        // Atualize myData para refletir a exclusão localmente
+                        if (myData.value[comboKey]) {
+                            delete myData.value[comboKey];
+                        }
+                        msg.value = 'Combo removido com sucesso'; // Usando msg.value para atribuir valor a uma variável reativa
+                        tipo.value = 'success'; // Usando tipo.value para atribuir valor a uma variável reativa
+                        setTimeout(() => {
+                            msg.value = ''; // Limpar a mensagem após 3 segundos
+                            tipo.value = ''; // Limpar o tipo após 3 segundos
+                        }, 3000);
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao excluir o combo:', error);
+                    });
+            }
+        };
+
+        return {
+            msg,
+            tipo,
+            myData,
+            deleteCombo,
+        };
     },
     computed: {
         formattedValue() {
             return (value) => {
-                return `${value.toLocaleString("pt-BR", {
+                return `${value.toLocaleString('pt-BR', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
-                })},00`;
+                })}`;
             };
         },
     },
-    mounted() {
-        const baseUrl = 'http://localhost:8800';
-        this.getDados(`${baseUrl}/combos`, 'combosN');
-    }
-}
+};
 </script>
+
 
 <style scoped lang="scss">
 .combosContainer {
