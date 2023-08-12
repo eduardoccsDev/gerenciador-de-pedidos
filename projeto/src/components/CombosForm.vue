@@ -60,6 +60,14 @@
                         </option>
                     </select>
                 </div>
+                <div class="inputContainer">
+                    <label for="imgCombo">
+                        <i class="fa-solid fa-image"></i>
+                        Imagem do combo:
+                    </label>
+                    <input id="imgCombo" type="file" @change="handleImageUpload" accept="image/*">
+                </div>
+
             </div>
             <div class="rowForm">
                 <div class="inputContainer">
@@ -96,6 +104,12 @@
                     </div>
                 </div>
             </div>
+            <div class="rowForm">
+                <div class="inputContainer">
+                    <label for="description"><i class="fa-solid fa-message"></i> Descrição:</label>
+                    <textarea id="description" v-model="description" placeholder="Descrição do combo (opcional)"></textarea>
+                </div>
+            </div>
             <div class="btnContainer">
                 <button type="submit" class="submitBtn"><i class="fa-solid fa-plus"></i>Criar combo</button>
             </div>
@@ -108,6 +122,7 @@
 import Message from './Message.vue';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get, push } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 export default {
     name: 'CombosForm',
     components: {
@@ -115,6 +130,9 @@ export default {
     },
     data() {
         return {
+            comboData: {
+                imageURL: '',
+            },
             nameCombo: '',
             priceCombo: '',
             hamburger_meat: '',
@@ -123,9 +141,12 @@ export default {
             optional: [],
             drinks: [],
             accompaniments: [],
+            description: '',
             msg: null,
             tipo: null,
-            myData: {}
+            currentComboHash: null,
+            myData: {},
+
         }
     },
     methods: {
@@ -135,6 +156,31 @@ export default {
                 this[propriedade] = snapshot.val();
             } catch (error) {
                 console.log('Erro ao obter os dados:', error);
+            }
+        },
+        async handleImageUpload() {
+            if (this.currentComboHash) { // Verifica se currentComboHash é válido
+                try {
+                    const imageFile = document.getElementById('imgCombo').files[0]; // Obter o arquivo do input
+
+                    if (!imageFile) {
+                        console.warn('Nenhuma imagem selecionada.');
+                        return;
+                    }
+
+                    const storage = getStorage();
+                    const storageReference = storageRef(storage, `featuredImageCombo/${this.currentComboHash}/${imageFile.name}`);
+
+                    const uploadTask = await uploadBytes(storageReference, imageFile);
+                    const imageURL = await getDownloadURL(storageReference);
+
+                    this.comboData.imageURL = imageURL;
+                    // ... código para mostrar mensagem de sucesso ou outras ações ...
+                } catch (error) {
+                    console.error('Erro ao enviar imagem:', error);
+                }
+            } else {
+                console.warn('currentComboHash inválido. Não é possível fazer o upload da imagem.');
             }
         },
         createCombo() {
@@ -153,12 +199,23 @@ export default {
                     bread: this.bread,
                     optional: this.optional,
                     drinks: this.drinks,
-                    accompaniments: this.accompaniments
+                    accompaniments: this.accompaniments,
+                    description: this.description
                 };
 
                 // Use 'push' para criar uma nova chave única para o combo'
                 push(availableCombosRef, comboData)
-                    .then(() => {
+                    .then((newRef) => {
+
+                        // Obtém a chave (hash) do novo combo criado
+                        const comboHash = newRef.key;
+
+                        // Associe o hash do combo à propriedade 'currentComboHash'
+                        this.currentComboHash = comboHash;
+
+                        // Agora que você tem o hash, chame a função para realizar o upload da imagem
+                        this.handleImageUpload();
+
                         this.msg = 'Combo criado com sucesso'
                         this.tipo = 'success'
                         setTimeout(() => this.msg = "", 3000);
@@ -171,12 +228,13 @@ export default {
                         this.optional = [];
                         this.drinks = [];
                         this.accompaniments = [];
+                        this.description = "";
                     })
                     .catch(error => {
                         console.log('Erro ao criar combo:', error);
                     });
             }
-        }
+        },
     },
     mounted() {
         const auth = getAuth();
@@ -232,12 +290,17 @@ export default {
         }
 
         input,
-        select {
+        select,
+        textarea {
             border-radius: 5px;
             border: none;
             padding: .5em;
             color: var(--dark);
             background-color: #fff;
+
+            &:focus-visible {
+                outline: solid 2px var(--primary);
+            }
         }
     }
 

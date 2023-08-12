@@ -62,15 +62,6 @@ export default {
 </script>
 
 <style lang="scss">
-:root {
-  --primary: #FFB711;
-  --primary-alt: #cc9411;
-  --gray: #737373;
-  --dark: #222;
-  --dark-alt: #181818;
-  --light: #fff;
-  --sidebar-width: 300px;
-}
 
 * {
   margin: 0;
