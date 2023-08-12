@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 export default {
     name: 'CardPedidos',
     props: {
@@ -132,48 +132,48 @@ export default {
         }
     },
     methods: {
-        getDados(url, propriedade) {
-            axios.get(url)
-                .then(response => {
-                    this[propriedade] = response.data;
-                })
-                .catch(error => {
-                    console.log('Erro ao obter os dados:', error);
-                });
-        },
-        updateConcluido(id) {
-            const concluido = 1;
+        // getDados(url, propriedade) {
+        //     axios.get(url)
+        //         .then(response => {
+        //             this[propriedade] = response.data;
+        //         })
+        //         .catch(error => {
+        //             console.log('Erro ao obter os dados:', error);
+        //         });
+        // },
+        // updateConcluido(id) {
+        //     const concluido = 1;
 
-            axios.put(`http://localhost:8800/burgersc/${id}`, { concluido: concluido })
-                .then(response => {
+        //     axios.put(`http://localhost:8800/burgersc/${id}`, { concluido: concluido })
+        //         .then(response => {
 
-                })
-                .catch(error => {
-                    console.error('Erro ao concluir o pedido:', error);
-                });
-        },
-        updateBurger(event, id) {
-            const novoStatus = event.target.value;
+        //         })
+        //         .catch(error => {
+        //             console.error('Erro ao concluir o pedido:', error);
+        //         });
+        // },
+        // updateBurger(event, id) {
+        //     const novoStatus = event.target.value;
 
-            axios.put(`http://localhost:8800/burgers/${id}`, {
-                status: novoStatus
-            })
-                .then(response => {
-                })
-                .catch(error => {
-                    console.error('Erro ao atualizar o status:', error);
-                });
-        },
-        deleteBurger(id, sufixo, arrayNome) {
-            axios.delete(`http://localhost:8800/burgers/${id}`)
-                .then(response => {
+        //     axios.put(`http://localhost:8800/burgers/${id}`, {
+        //         status: novoStatus
+        //     })
+        //         .then(response => {
+        //         })
+        //         .catch(error => {
+        //             console.error('Erro ao atualizar o status:', error);
+        //         });
+        // },
+        // deleteBurger(id, sufixo, arrayNome) {
+        //     axios.delete(`http://localhost:8800/burgers/${id}`)
+        //         .then(response => {
 
-                    this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
-                })
-                .catch(error => {
-                    console.error('Erro ao excluir o pedido:', error);
-                });
-        },
+        //             this.getDados(`http://localhost:8800/burgers${sufixo}`, arrayNome);
+        //         })
+        //         .catch(error => {
+        //             console.error('Erro ao excluir o pedido:', error);
+        //         });
+        // },
         itemList(itemComboList) {
             return itemComboList.split(",");
         },

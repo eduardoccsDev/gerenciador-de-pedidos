@@ -1,13 +1,17 @@
 <template>
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
+    <div v-if="adminFunctions == true" class="adminFunction">
+        <Toggle v-model="value" offLabel='Off' onLabel="On" class="toggle-primary"/>
+        <p class="functionText">Função admin</p>
+    </div>
     <div class="combosContainer">
         <div v-for="(item, index) in myData" :key="index" class="cardCombo">
             <div class="cardHeader">
                 <div class="titleContainer">
                     <p class="comboName">{{ item.nameCombo }}</p>
                 </div>
-                <div v-if="adminFunctions" class="editContainer">
-                    <router-link :to="'/editarCombo/'+ item.key">
+                <div v-if="adminFunctions && value" class="editContainer">
+                    <router-link :to="'/editarCombo/' + item.key">
                         <button class="btn edit" title="Editar">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
@@ -25,10 +29,10 @@
                 <button type="button" class="btn abrirModal" data-bs-toggle="modal" :data-bs-target="'#modal-' + index">
                     <i class="fa-solid fa-plus"></i> Detalhes
                 </button>
-                <button v-if="adminFunctions" class="btn excluirCombo" @click="deleteCombo(item.key)">
+                <button v-if="adminFunctions && value" class="btn excluirCombo" @click="deleteCombo(item.key)">
                     <i class="fa-solid fa-trash-can"></i> Excluir
                 </button>
-                <router-link v-else :to="'/pedido/'+ item.key">
+                <router-link v-else-if="adminFunctions == false" :to="'/pedido/' + item.key">
                     <button class="btn pedirCombo">
                         <i class="fa-regular fa-circle-check"></i> Pedir
                     </button>
@@ -90,17 +94,23 @@ import { ref } from 'vue';
 import Message from './Message.vue';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref as dbRef, get, remove } from 'firebase/database';
-
+import Toggle from '@vueform/toggle'
 export default {
     name: 'CardCombos',
     components: {
         Message,
+        Toggle
     },
     props: {
         adminFunctions: {
             type: Boolean,
             default: false,
         },
+    },
+    data() {
+        return {
+            value: false,
+        }
     },
     setup(props) {
         const msg = ref(null);
@@ -174,8 +184,25 @@ export default {
 };
 </script>
 
-
+<style src="@vueform/toggle/themes/default.css"></style>
 <style scoped lang="scss">
+.adminFunction {
+    padding: 1em;
+    display: flex;
+    background-color: #c0c0c097;
+    margin-bottom: 2em;
+    border-radius: 5px;
+    justify-content: flex-end;
+
+    .functionText {
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 0px;
+        margin-left: .5em;
+    }
+}
+
 .combosContainer {
     display: flex;
     flex-wrap: wrap;
@@ -337,4 +364,8 @@ export default {
         }
     }
 }
+.toggle-primary{
+    --toggle-bg-on: var(--primary);
+    --toggle-border-on: var(--primary);
+    }
 </style>
