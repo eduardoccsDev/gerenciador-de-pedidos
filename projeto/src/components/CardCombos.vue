@@ -1,38 +1,45 @@
 <template>
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div v-if="adminFunctions == true" class="adminFunction">
-        <Toggle v-model="value" offLabel='Off' onLabel="On" class="toggle-primary"/>
+        <Toggle v-model="value" offLabel='Off' onLabel="On" class="toggle-primary" />
         <p class="functionText">Função admin</p>
     </div>
     <div class="combosContainer">
         <div v-for="(item, index) in myData" :key="index" class="cardCombo">
+            <div class="imageComboContainer">
+                <div class="adminBtns">
+                    <Transition name="grow-in" mode="out-in">
+                        <router-link v-if="adminFunctions && value" :to="'/editarCombo/' + item.key">
+                            <button class="btn edit" title="Editar">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </router-link>
+                    </Transition>
+                    <Transition name="grow-in" mode="out-in">
+                        <button v-if="adminFunctions && value" class="btn excluirCombo" @click="deleteCombo(item.key)">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </Transition>
+                </div>
+                <img :src="item.imageURL || './img/no-photo-available.png'" alt="featuredImageCombo" class="featuredImage">
+            </div>
             <div class="cardHeader">
                 <div class="titleContainer">
                     <p class="comboName">{{ item.nameCombo }}</p>
                 </div>
-                <div v-if="adminFunctions && value" class="editContainer">
-                    <router-link :to="'/editarCombo/' + item.key">
-                        <button class="btn edit" title="Editar">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                    </router-link>
-                </div>
             </div>
             <div class="infosCombo">
-                <p class="valorCombo"><i class="fa-solid fa-brazilian-real-sign"></i>{{ formattedValue(item.priceCombo) }}
+                <div class="info">
+                    <p>Carne: {{ item.hamburger_meat }} | Pão: {{ item.bread }} | Molho: {{ item.sauce }}</p>
+                </div>
+                <p class="valorCombo">R${{ formattedValue(item.priceCombo) }}
                 </p>
-                <p><i class="fa-solid fa-burger"></i>{{ item.hamburger_meat }}</p>
-                <p><i class="fa-solid fa-bread-slice"></i>{{ item.bread }}</p>
-                <p><i class="fa-solid fa-droplet"></i>{{ item.sauce }}</p>
             </div>
             <div class="btnContainer">
                 <button type="button" class="btn abrirModal" data-bs-toggle="modal" :data-bs-target="'#modal-' + index">
                     <i class="fa-solid fa-plus"></i> Detalhes
                 </button>
-                <button v-if="adminFunctions && value" class="btn excluirCombo" @click="deleteCombo(item.key)">
-                    <i class="fa-solid fa-trash-can"></i> Excluir
-                </button>
-                <router-link v-else-if="adminFunctions == false" :to="'/pedido/' + item.key">
+                <router-link v-if="adminFunctions == false" :to="'/pedido/' + item.key">
                     <button class="btn pedirCombo">
                         <i class="fa-regular fa-circle-check"></i> Pedir
                     </button>
@@ -208,17 +215,80 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
 
+
+    .imageComboContainer {
+        width: 100%;
+        height: 250px;
+
+        .featuredImage {
+            border-radius: 20px 20px 0px 0px;
+            width: 100%;
+            height: inherit;
+
+        }
+    }
+
+
     .cardCombo {
-        padding: 1em;
         margin-bottom: 2em;
-        box-shadow: 0px 0px 8px -4px #0000008f;
-        border-radius: 10px;
-        width: 400px;
-        background-color: var(--light);
+        box-shadow: 7px 10px 27px -3px rgba(0, 0, 0, 0.33);
+        border-radius: 20px;
+        width: 350px;
+        background-color: var(--primary);
+        background-image: url('./img/marca-dagua.png');
+        background-size: 300px;
+        background-position-x: 8em;
+        background-repeat: no-repeat;
+        background-position-y: 21em;
 
         @media(max-width: 468px) {
             width: 100%;
         }
+    }
+
+    .adminBtns {
+        display: flex;
+        justify-content: flex-end;
+        margin-inline: 1em;
+        position: absolute;
+        margin-top: 10px;
+
+        a {
+            margin-right: .5em;
+            transition: .5s;
+
+            &:hover {
+                color: var(--dark);
+                transform: scale(1.2);
+            }
+
+            .edit {
+                padding: 0px;
+
+                i {
+                    background-color: #fff;
+                    padding: .3em;
+                    border-radius: 100%;
+
+                }
+            }
+        }
+
+        .excluirCombo {
+            padding: 0px;
+            transition: .5s;
+
+            &:hover {
+                transform: scale(1.2);
+            }
+
+            i {
+                background-color: #fff;
+                padding: .3em;
+                border-radius: 100%;
+            }
+        }
+
     }
 
     .cardHeader {
@@ -226,34 +296,17 @@ export default {
         justify-content: space-between;
 
         .titleContainer {
-            margin-bottom: 1em;
-            background-color: var(--dark);
+            margin-top: 1em;
             padding: .5em .3em;
-            border-radius: 5px;
             width: 100%;
+            text-align: center;
 
             .comboName {
                 margin-bottom: 0px;
                 color: #fff;
                 padding-inline: .3em;
-            }
-        }
+                font-size: 26px;
 
-        .editContainer {
-            a {
-                color: var(--dark);
-            }
-
-            .edit {
-                background-color: #00cfff;
-                transition: .5s;
-                padding: .5em .8em;
-                color: var(--dark);
-                margin-left: .3em;
-
-                &:hover {
-                    background-color: #007792;
-                }
             }
         }
     }
@@ -261,25 +314,18 @@ export default {
     .btnContainer {
         text-align: center;
         display: flex;
+        margin-inline: 1em;
 
         .abrirModal {
-            background-color: var(--primary);
-            width: 100%;
+            background-color: var(--dark);
+            width: 90%;
             transition: .5s;
+            color: #fff;
+            margin: auto;
+            margin-bottom: 1em;
 
             &:hover {
-                background-color: var(--primary-alt);
-            }
-        }
-
-        .excluirCombo {
-            background-color: rgb(253, 128, 128);
-            width: 100%;
-            transition: .5s;
-            margin-left: .3em;
-
-            &:hover {
-                background-color: rgb(206, 89, 89);
+                background-color: var(--gray);
             }
         }
 
@@ -305,29 +351,24 @@ export default {
     }
 
     .infosCombo {
-        background-color: #e9e9e9;
         padding: .5em;
         border-radius: 5px;
         margin-bottom: .5em;
+        text-align: center;
 
-        p {
-            margin-bottom: .8em;
+        .info {
+            text-align: center;
 
-            i {
-                margin-right: .5em;
-                color: var(--dark);
-                background-color: var(--primary);
-                padding: .3em;
-                border-radius: 5px;
-                width: 30px;
-                text-align: center;
+            p {
+                color: #fff;
             }
         }
 
         .valorCombo {
             font-weight: bold;
-            text-decoration: underline;
-            font-size: 18px;
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 0px;
         }
     }
 
@@ -364,8 +405,20 @@ export default {
         }
     }
 }
-.toggle-primary{
+
+.toggle-primary {
     --toggle-bg-on: var(--primary);
     --toggle-border-on: var(--primary);
-    }
+}
+
+.grow-in-enter-from,
+.grow-in-leave-to {
+    opacity: 0;
+    transform: scale(0.3);
+}
+
+.grow-in-enter-active,
+.grow-in-leave.active {
+    transition: 0.3s ease-out;
+}
 </style>

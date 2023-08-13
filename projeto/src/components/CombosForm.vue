@@ -200,39 +200,73 @@ export default {
                     optional: this.optional,
                     drinks: this.drinks,
                     accompaniments: this.accompaniments,
-                    description: this.description
+                    description: this.description,
                 };
 
-                // Use 'push' para criar uma nova chave única para o combo'
-                push(availableCombosRef, comboData)
-                    .then((newRef) => {
+                const imageFile = document.getElementById('imgCombo').files[0];
 
-                        // Obtém a chave (hash) do novo combo criado
-                        const comboHash = newRef.key;
+                if (imageFile) {
+                    const storage = getStorage();
+                    const imageFolderName = this.nameCombo.replace(/\s+/g, '-').toLowerCase(); // Usar o nome do combo para criar o nome da pasta da imagem
+                    const storageReference = storageRef(storage, `featuredImageCombo/${imageFolderName}/${imageFile.name}`);
+                    uploadBytes(storageReference, imageFile)
+                        .then(() => {
+                            return getDownloadURL(storageReference);
+                        })
+                        .then(imageURL => {
+                            comboData.imageURL = imageURL;
 
-                        // Associe o hash do combo à propriedade 'currentComboHash'
-                        this.currentComboHash = comboHash;
-
-                        // Agora que você tem o hash, chame a função para realizar o upload da imagem
-                        this.handleImageUpload();
-
-                        this.msg = 'Combo criado com sucesso'
-                        this.tipo = 'success'
-                        setTimeout(() => this.msg = "", 3000);
-                        //limpar campos
-                        this.nameCombo = "";
-                        this.priceCombo = "";
-                        this.hamburger_meat = "";
-                        this.sauce = "";
-                        this.bread = "";
-                        this.optional = [];
-                        this.drinks = [];
-                        this.accompaniments = [];
-                        this.description = "";
-                    })
-                    .catch(error => {
-                        console.log('Erro ao criar combo:', error);
-                    });
+                            // Criação do combo com os dados e a URL da imagem
+                            push(availableCombosRef, comboData)
+                                .then(() => {
+                                    this.msg = 'Combo criado com sucesso';
+                                    this.tipo = 'success';
+                                    setTimeout(() => {
+                                        this.msg = "";
+                                    }, 3000);
+                                    // Limpar campos
+                                    this.nameCombo = "";
+                                    this.priceCombo = "";
+                                    this.hamburger_meat = "";
+                                    this.sauce = "";
+                                    this.bread = "";
+                                    this.optional = [];
+                                    this.drinks = [];
+                                    this.accompaniments = [];
+                                    this.description = "";
+                                    this.comboData.imageURL = "";
+                                })
+                                .catch(error => {
+                                    console.log('Erro ao criar combo:', error);
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Erro ao enviar imagem:', error);
+                        });
+                } else {
+                    // Criação do combo sem a imagem
+                    push(availableCombosRef, comboData)
+                        .then(() => {
+                            this.msg = 'Combo criado com sucesso';
+                            this.tipo = 'success';
+                            setTimeout(() => {
+                                this.msg = "";
+                            }, 3000);
+                            // Limpar campos
+                            this.nameCombo = "";
+                            this.priceCombo = "";
+                            this.hamburger_meat = "";
+                            this.sauce = "";
+                            this.bread = "";
+                            this.optional = [];
+                            this.drinks = [];
+                            this.accompaniments = [];
+                            this.description = "";
+                        })
+                        .catch(error => {
+                            console.log('Erro ao criar combo:', error);
+                        });
+                }
             }
         },
     },
