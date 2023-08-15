@@ -1,8 +1,8 @@
 <template>
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
-    <div v-for="combo in combosN" :key="combo.idcombo" class="editContainer">
+    <div class="editContainer">
         <div class="comboFormContainer">
-            <form id="comboForm" @submit.prevent="() => submitForm(combo)">
+            <form id="comboForm" @submit.prevent="updateCombo">
                 <div class="rowForm">
                     <div class="inputContainer">
                         <label>
@@ -10,7 +10,7 @@
                             Nome do combo:
                             <span>*</span>
                         </label>
-                        <input type="text" required name="nomeCombo" v-model="combo.nomeCombo" placeholder="Nome do combo">
+                        <input type="text" required name="nameCombo" v-model="myData.nameCombo" placeholder="Nome do combo">
                     </div>
                     <div class="inputContainer">
                         <label>
@@ -18,7 +18,7 @@
                             Preço do combo:
                             <span>*</span>
                         </label>
-                        <input type="number" required name="valorCombo" v-model="combo.valorCombo"
+                        <input type="number" required name="priceCombo" v-model="myData.priceCombo"
                             placeholder="Preço do combo">
                     </div>
                     <div class="inputContainer">
@@ -27,10 +27,10 @@
                             Escolha a carne do combo:
                             <span>*</span>
                         </label>
-                        <select id="carne" name="carne" required v-model="combo.carneCombo">
+                        <select id="carne" name="hamburger_meat" required v-model="myData.hamburger_meat">
                             <option value="" disabled>Selecione o tipo de carne</option>
-                            <option v-for="carne in carnesN" :key="carne.idcarne" :value="carne.nomeCarne">
-                                {{ carne.nomeCarne }}
+                            <option v-for="carne in productsStock.nomeCarne" :key="carne" :value="carne">
+                                {{ carne }}
                             </option>
                         </select>
                     </div>
@@ -42,10 +42,10 @@
                             Escolha o molho do combo:
                             <span>*</span>
                         </label>
-                        <select id="molho" name="molho" required v-model="combo.molhoCombo">
+                        <select id="molho" name="sauce" required v-model="myData.sauce">
                             <option value="" selected disabled>Selecione o molho</option>
-                            <option v-for="molho in molhosN" :key="molho.idmolho" :value="molho.nomeMolho">
-                                {{ molho.nomeMolho }}
+                            <option v-for="molho in productsStock.nomeMolho" :key="molho" :value="molho">
+                                {{ molho }}
                             </option>
                         </select>
                     </div>
@@ -55,12 +55,19 @@
                             Escolha o pão do combo:
                             <span>*</span>
                         </label>
-                        <select id="pao" name="pao" required v-model="combo.paoCombo">
+                        <select id="pao" name="bread" required v-model="myData.bread">
                             <option value="" selected disabled>Selecione o pão</option>
-                            <option v-for="pao in paesN" :key="pao.idpao" :value="pao.nomePao">
-                                {{ pao.nomePao }}
+                            <option v-for="pao in productsStock.nomePao" :key="pao" :value="pao">
+                                {{ pao }}
                             </option>
                         </select>
+                    </div>
+                    <div class="inputContainer">
+                        <label for="imgCombo">
+                            <i class="fa-solid fa-image"></i>
+                            Imagem do combo:
+                        </label>
+                        <input id="imgCombo" type="file" @change="handleImageChange" accept="image/*">
                     </div>
                 </div>
                 <div class="rowForm">
@@ -68,12 +75,10 @@
                         <label for="opcionais" id="opcionaisTtitle"><i class="fa-solid fa-plus"></i> Opcionais do
                             combo:</label>
                         <div class="opcionaisContainer">
-                            <div class="checkBoxContainer" v-for="opcional in opcionaisN" :key="opcional.idopcional">
-                                <input type="checkbox" :id="opcional.nomeOpcional" name="opcionais"
-                                    v-model="combo.opcionais" :checked="combo.opcionais.includes(opcional.nomeOpcional)"
-                                    :value="opcional.nomeOpcional">
-                                <label class="optionL" :for="opcional.nomeOpcional">{{ opcional.nomeOpcional
-                                }}</label>
+                            <div class="checkBoxContainer" v-for="opcional in productsStock.nomeOpcional" :key="opcional">
+                                <input type="checkbox" :id="opcional" name="oprional" v-model="myData.optional"
+                                    :checked="myData.optional.includes(opcional)" :value="opcional">
+                                <label class="optionL" :for="opcional">{{ opcional }}</label>
                             </div>
                         </div>
                     </div>
@@ -81,13 +86,14 @@
                         <label for="acompanhamentos" id="acompanhamentoTitle"><i class="fa-solid fa-bowl-food"></i>
                             Acompanhamentos do combo:</label>
                         <div class="opcionaisContainer  listModel">
-                            <div class="checkBoxContainer" v-for="acompanhamento in acompanhamentosN"
-                                :key="acompanhamento.idacompanhamento">
-                                <input type="checkbox" :id="acompanhamento.nomeAcompanhamento" name="acompanhamentos"
-                                    v-model="combo.acompanhamentos" :value="acompanhamento.nomeAcompanhamento + ' - ' + acompanhamento.qtdAcompanhamento"
-                                    :checked="combo.acompanhamentos.includes(acompanhamento.nomeAcompanhamento)">
-                                <label class="optionL" :for="acompanhamento.nomeAcompanhamento">{{
-                                    acompanhamento.nomeAcompanhamento }} - {{ acompanhamento.qtdAcompanhamento }}</label>
+                            <div class="checkBoxContainer" v-for="acompanhamento in productsStock.nomeAcompanhamento"
+                                :key="acompanhamento.name">
+                                <input type="checkbox" :id="acompanhamento.name" name="accompaniments"
+                                    v-model="myData.accompaniments"
+                                    :value="acompanhamento.name + ' - ' + acompanhamento.qtdItem"
+                                    :checked="myData.accompaniments.includes(acompanhamento.name)">
+                                <label class="optionL" :for="acompanhamento.name">{{ acompanhamento.name }} - {{
+                                    acompanhamento.qtdItem }}</label>
                             </div>
                         </div>
                     </div>
@@ -95,13 +101,20 @@
                         <label for="bebida" id="bebidaTitle"><i class="fa-solid fa-beer-mug-empty"></i> bebidas do
                             combo:</label>
                         <div class="opcionaisContainer">
-                            <div class="checkBoxContainer" v-for="bebida in bebidasN" :key="bebida.idbebida">
-                                <input type="checkbox" :id="bebida.idbebida" name="bebida" v-model="combo.bebidas"
-                                    :value="bebida.nomeBebida + ' - ' + bebida.qtdBebida" :checked="combo.bebidas.includes(bebida.nomeBebida)">
-                                <label class="optionL" :for="bebida.idbebida">{{ bebida.nomeBebida }} -
-                                    {{ bebida.qtdBebida }}</label>
+                            <div class="checkBoxContainer" v-for="bebida in productsStock.nomeBebida" :key="bebida.name">
+                                <input type="checkbox" :id="bebida.name" name="drinks" v-model="myData.drinks"
+                                    :value="bebida.name + ' - ' + bebida.qtdItem"
+                                    :checked="myData.drinks.includes(bebida.name)">
+                                <label class="optionL" :for="bebida.name">{{ bebida.name }} - {{ bebida.qtdItem }}</label>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="rowForm">
+                    <div class="inputContainer">
+                        <label for="description"><i class="fa-solid fa-message"></i> Descrição:</label>
+                        <textarea id="description" v-model="myData.description"
+                            placeholder="Descrição do combo (opcional)"></textarea>
                     </div>
                 </div>
                 <div class="btnContainer">
@@ -114,8 +127,12 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+import { ref } from 'vue';
+import { getDatabase, ref as dbRef, get, set } from 'firebase/database';
+import { useRoute } from 'vue-router';
 import Message from './Message.vue';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 export default {
     name: 'editComboForm',
     components: {
@@ -123,83 +140,136 @@ export default {
     },
     data() {
         return {
-            comboId: null,
-            combosN: [],
-            carnesN: [],
-            molhosN: [],
-            paesN: [],
-            opcionaisN: [],
-            acompanhamentosN: [],
-            bebidasN: [],
-           
-            msg: null,
-            tipo: null
         }
     },
-    methods: {
-        async getDados(url, propriedade) {
-            try {
-                const response = await axios.get(url);
-                this[propriedade] = response.data;
-            } catch (error) {
-                console.log('Erro ao obter os dados:', error);
-            }
-        },
-        itemList(itemComboList) {
-            return itemComboList.split(",");
-        },
-        submitForm(combo) {
-            this.atualizarDados(combo);
-        },
-        async atualizarDados(combo) {
-            try {
-                const baseUrl = 'http://localhost:8800';
-                const comboData = {
-                    nomeCombo: combo.nomeCombo,
-                    valorCombo: combo.valorCombo,
-                    carneCombo: combo.carneCombo,
-                    molhoCombo: combo.molhoCombo,
-                    paoCombo: combo.paoCombo,
-                    opcionaisCombo: combo.opcionais.join(","),
-                    bebidaCombo: combo.bebidas.join(","),
-                    acompanhamentoCombo: combo.acompanhamentos.join(","),
-                };
+    setup(props) {
+        const msg = ref(null);
+        const tipo = ref(null);
+        const myData = ref({});
+        const productsStock = ref({});
+        const route = useRoute();
 
-                await axios.put(`${baseUrl}/combos/${this.comboId}`, comboData);
-                this.msg = 'Combo atualizado com sucesso!'
-                this.tipo = "success"
-                setTimeout(() => this.msg = "", 3000);
-                console.log('Dados do combo atualizados com sucesso!');
-            } catch (error) {
-                console.log('Erro ao atualizar os dados do combo: ', error);
-            }
-        }
-    },
-    mounted() {
-        this.comboId = this.$route.params.id;
-        const baseUrl = 'http://localhost:8800';
-        this.getDados(`${baseUrl}/combos/${this.comboId}`, 'combosN')
-            .then(() => {
-                // Certifique-se de que cada combo tenha um array vazio caso não tenha opcionais ou acompanhamentos
-                this.combosN.forEach(combo => {
-                    combo.opcionais = combo.opcionaisCombo ? this.itemList(combo.opcionaisCombo) : [];
-                    combo.bebidas = combo.bebidaCombo ? this.itemList(combo.bebidaCombo) : [];
-                    combo.acompanhamentos = combo.acompanhamentoCombo ? this.itemList(combo.acompanhamentoCombo) : [];
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+
+        if (user && user.uid) {
+            const db = getDatabase();
+            const comboRef = dbRef(db, `stores/${user.uid}/availableCombos/${route.params.id}`);
+            get(comboRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        myData.value = snapshot.val();
+                    } else {
+                        console.log('Combo não encontrado');
+                    }
+                })
+                .catch((error) => {
+                    console.log('Erro ao obter os dados:', error);
                 });
 
-                // Após garantir que os arrays opcionais e acompanhamentos estão definidos corretamente,
-                // carregue os dados dos demais itens
-                this.getDados(`${baseUrl}/carnes`, 'carnesN');
-                this.getDados(`${baseUrl}/molhos`, 'molhosN');
-                this.getDados(`${baseUrl}/paes`, 'paesN');
-                this.getDados(`${baseUrl}/opcionais`, 'opcionaisN');
-                this.getDados(`${baseUrl}/bebidas`, 'bebidasN');
-                this.getDados(`${baseUrl}/acompanhamentos`, 'acompanhamentosN');
-            })
-            .catch(error => {
-                console.log('Erro ao obter os dados:', error);
-            });
-    }
+            // Recuperar os dados de productStock
+
+            const productStockRef = dbRef(db, `stores/${user.uid}/productStock`);
+            get(productStockRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        productsStock.value = snapshot.val();
+                    } else {
+                        console.log('Dados de productStock não encontrados');
+                    }
+                })
+                .catch((error) => {
+                    console.log('Erro ao obter os dados de productStock:', error);
+                });
+        };
+        let selectedImage = null; // Variável para armazenar temporariamente a imagem selecionada
+
+        // Adicione esse método para lidar com a mudança na seleção da imagem
+        const handleImageChange = (event) => {
+            selectedImage = event.target.files[0];
+        };
+
+        // Atualiza o combo, considerando a nova imagem, se houver
+        const updateCombo = () => {
+            if (user && user.uid) {
+                const db = getDatabase();
+                const comboRef = dbRef(db, `stores/${user.uid}/availableCombos/${route.params.id}`);
+
+                // Prepare the data to update
+                const updatedComboData = {
+                    nameCombo: myData.value.nameCombo,
+                    priceCombo: myData.value.priceCombo,
+                    hamburger_meat: myData.value.hamburger_meat,
+                    sauce: myData.value.sauce,
+                    bread: myData.value.bread,
+                    optional: myData.value.optional,
+                    accompaniments: myData.value.accompaniments,
+                    drinks: myData.value.drinks,
+                    description: myData.value.description
+                };
+
+                // Se uma nova imagem foi selecionada, atualize-a no Storage
+                if (selectedImage) {
+                    const storage = getStorage();
+                    const imageFolderName = myData.value.nameCombo.replace(/\s+/g, '-').toLowerCase();
+                    const storageReference = storageRef(storage, `featuredImageCombo/${imageFolderName}/${selectedImage.name}`);
+
+                    uploadBytes(storageReference, selectedImage)
+                        .then(() => {
+                            return getDownloadURL(storageReference);
+                        })
+                        .then(imageURL => {
+                            updatedComboData.imageURL = imageURL;
+
+                            // Atualização do combo com os dados e a URL da imagem
+                            set(comboRef, updatedComboData)
+                                .then(() => {
+                                    msg.value = 'Combo atualizado com sucesso!';
+                                    tipo.value = 'success';
+                                    setTimeout(() => {
+                                        msg.value = '';
+                                        tipo.value = '';
+                                    }, 3000);
+                                })
+                                .catch((error) => {
+                                    console.error('Erro ao atualizar o combo:', error);
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Erro ao enviar imagem:', error);
+                        });
+                } else {
+                    // Mantém a URL existente da imagem
+                    updatedComboData.imageURL = myData.value.imageURL;
+
+                    // Atualiza apenas os outros campos
+                    set(comboRef, updatedComboData)
+                        .then(() => {
+                            msg.value = 'Combo atualizado com sucesso!';
+                            tipo.value = 'success';
+                            setTimeout(() => {
+                                msg.value = '';
+                                tipo.value = '';
+                            }, 3000);
+                        })
+                        .catch((error) => {
+                            console.error('Erro ao atualizar o combo:', error);
+                        });
+                }
+            }
+        };
+
+        return {
+            msg,
+            tipo,
+            myData,
+            productsStock,
+            handleImageChange,
+            updateCombo, // Nome corrigido da função
+            comboId: route.params.id
+        };
+    },
 }
 </script>
 
@@ -242,7 +312,8 @@ export default {
         }
 
         input,
-        select {
+        select,
+        textarea {
             border-radius: 5px;
             border: none;
             padding: .5em;
