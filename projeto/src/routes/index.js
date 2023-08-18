@@ -90,6 +90,13 @@ const routes = [
     //   requiresAuth: true,
     // }
     beforeEnter: checkStoreFunction
+  },
+  {
+    path: '/profile/:id',
+    component: () => import('../views/Profile.vue'),
+    meta: {
+      requiresAuth: true,
+    }
   }
 ]
 

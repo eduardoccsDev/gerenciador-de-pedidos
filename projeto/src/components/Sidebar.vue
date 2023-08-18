@@ -5,7 +5,10 @@
                 <img v-if="currentUser && currentUser.photoURL" :src="currentUser.photoURL" alt="UserPhoto">
                 <img v-else src="/img/logo_circle_t.png" alt="logo">
             </router-link>
-            <h3  v-if="currentUser && currentUser.displayName" class="currentName">Olá {{currentUser.displayName}}</h3>
+            <router-link :to="'/profile/'+uidKey">
+                <h3  v-if="currentUser && currentUser.displayName" class="currentName">Olá {{currentUser.displayName}}</h3>
+                <h3 v-else class="currentName">Olá {{storeName}}</h3>
+            </router-link>
         </div>
         <div class="menu-toggle-wrap">
             <button class="menu-toggle" @click="ToggleMenu">
@@ -91,6 +94,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getDatabase, ref as dbRef, get } from 'firebase/database';
 
 const router = useRouter();
 
@@ -102,6 +106,8 @@ const ToggleMenu = () => {
 
 const isLoggedIn = ref(false);
 const currentUser = ref(null);
+const storeName = ref(null);
+const uidKey = ref(null);
 let auth;
 onMounted(()=>{
     auth = getAuth();
@@ -109,6 +115,36 @@ onMounted(()=>{
         if(user) {
             isLoggedIn.value = true;
             currentUser.value = user;
+        } else {
+            isLoggedIn.value = false;
+            currentUser.value = null;
+        }
+    });
+});
+
+onMounted(() => {
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            isLoggedIn.value = true;
+            currentUser.value = user;
+            
+            // Recupere os dados do usuário do nó "users"
+            const db = getDatabase();
+            const userRef = dbRef(db, 'users/' + user.uid);
+            get(userRef).then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.function === 'store') {
+                    // Se o usuário é uma loja, recupere o storeName do nó "stores"
+                    const storesRef = dbRef(db, 'stores/' + user.uid);
+                    get(storesRef).then((storeSnapshot) => {
+                        if (storeSnapshot.exists()) {
+                            storeName.value = storeSnapshot.val().storeName;
+                            uidKey.value = user.uid;
+                        }
+                    });
+                }
+            });
         } else {
             isLoggedIn.value = false;
             currentUser.value = null;
