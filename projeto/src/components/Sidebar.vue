@@ -5,10 +5,6 @@
                 <img v-if="currentUser && currentUser.photoURL" :src="currentUser.photoURL" alt="UserPhoto">
                 <img v-else src="/img/logo_circle_t.png" alt="logo">
             </router-link>
-            <router-link :to="'/profile/'+uidKey">
-                <h3  v-if="currentUser && currentUser.displayName" class="currentName">Olá {{currentUser.displayName}}</h3>
-                <h3 v-else class="currentName">Olá {{storeName}}</h3>
-            </router-link>
         </div>
         <div class="menu-toggle-wrap">
             <button class="menu-toggle" @click="ToggleMenu">
@@ -19,6 +15,14 @@
         </div>
         <h3 v-if="isLoggedIn" >Menu</h3>
         <div class="menu">
+            <router-link v-if="isLoggedIn" :to="'/profile/'+uidKey" class="buttonLink">
+                <span class="icons">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <span class="text">
+                    Perfil
+                </span>
+            </router-link>
             <router-link  v-if="isLoggedIn" to="/dashboard" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-house"></i>

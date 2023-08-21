@@ -2,6 +2,7 @@
     <Message :msg="msg" :tipo="tipo" v-show="msg" />
     <div class="container">
         <div class="main">
+            <h1>Perfil</h1>
             <div class="cardProfile">
                 <div class="userInfo">
                     <p class="userName">{{ myData.nameStore }} -
@@ -10,24 +11,37 @@
                     </p>
                     <div class="formUserInfoContainer">
                         <div class="adminFunction">
-                            <button @click="handleEditFunction" :class="{ 'inEdition': inEdition }">Editar dados</button>
+                            <button @click="handleEditFunction" :class="{ 'inEdition': inEdition }">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                Editar dados
+                            </button>
                         </div>
                         <form class="formUserInfo" @submit.prevent="saveUserInfo">
                             <div class="rowForm">
                                 <div class="inputContainer">
-                                    <label for="address">Endereço:</label>
+                                    <label for="address"><i class="fa-regular fa-map"></i> Endereço:</label>
                                     <input :disabled="editFunction" type="text" id="address" v-model="address"
                                         placeholder="Seu endereço">
                                 </div>
                                 <div class="inputContainer">
-                                    <label for="phone">Telefone para contato:</label>
+                                    <label for="phone"><i class="fa-brands fa-whatsapp"></i> Telefone para contato:</label>
                                     <input :disabled="editFunction" type="text" id="phone" v-model="phone"
                                         placeholder="Seu telefone">
                                 </div>
                             </div>
                             <div class="rowForm">
                                 <div class="inputContainer">
-                                    <label for="storeDescription">Descrição da loja:</label>
+                                    <label for="instagram"><i class="fa-brands fa-instagram"></i> Instagram:</label>
+                                    <input type="text" :disabled="editFunction" id="instagram" v-model="instagram" placeholder="Seu instagram">
+                                </div>
+                                <div class="inputContainer">
+                                    <label for="facebook"><i class="fa-brands fa-facebook"></i> Facebook:</label>
+                                    <input type="text" :disabled="editFunction" id="facebook" v-model="facebook" placeholder="Seu facebook">
+                                </div>
+                            </div>
+                            <div class="rowForm">
+                                <div class="inputContainer">
+                                    <label for="storeDescription"><i class="fa-regular fa-message"></i> Descrição da loja:</label>
                                     <textarea :disabled="editFunction" v-model="storeDescription" name="storeDescription"
                                         id="storeDescription" placeholder="Sua descrição"></textarea>
                                 </div>
@@ -70,6 +84,8 @@ export default {
         const storeDescription = ref(null);
         const address = ref(null);
         const phone = ref(null);
+        const facebook = ref(null);
+        const instagram = ref(null);
 
         const auth = getAuth();
         const user = auth.currentUser;
@@ -103,6 +119,8 @@ export default {
                         address.value = myData.value.address;
                         phone.value = myData.value.phone;
                         storeDescription.value = myData.value.storeDescription;
+                        facebook.value = myData.value.facebook;
+                        instagram.value = myData.value.instagram;
                     } else {
                         console.log('Usuário não encontrado');
                     }
@@ -119,7 +137,9 @@ export default {
             const userData = {
                 address: address.value,
                 phone: phone.value,
-                storeDescription: storeDescription.value
+                storeDescription: storeDescription.value,
+                facebook: facebook.value,
+                instagram: instagram.value
             };
 
             try {
@@ -149,6 +169,8 @@ export default {
             storeDescription,
             phone,
             address,
+            facebook,
+            instagram,
             saveUserInfo,
             handleEditFunction
         };
@@ -163,12 +185,25 @@ export default {
     border-radius: 20px;
     box-shadow: 7px 10px 27px -3px rgba(0, 0, 0, 0.33);
     background-color: #e9e9e9;
-    background-image: url('/img/marca-dagua.png');
     background-size: 300px;
     background-position-x: 8em;
     background-repeat: no-repeat;
     background-position-y: 21em;
-
+    padding-bottom: 2em;
+    .userInfo{
+        .userName{
+            font-size: 26px;
+            text-align: center;
+            border-bottom: solid 3px #c0c0c084;
+            line-height: 3em;
+            margin-bottom: 30px;
+            span{
+                background-color: #fff;
+                padding-inline: .2em;
+                border-radius: 5px;
+            }
+        }
+    }
     .formUserInfoContainer {
         .formUserInfo {
             .rowForm {
@@ -221,6 +256,41 @@ export default {
                     }
                 }
             }
+            .submitBtnContainer{
+                .submitBtn{
+                    background-color: var(--primary);
+                    padding: .5em;
+                    border-radius: 5px;
+                    margin-inline: .5em;
+                    margin-top: 10px;
+                    transition: .5s;
+                    &:disabled{
+                        filter: saturate(50%);
+                        cursor: default;
+                    }
+                    &:hover{
+                        box-shadow: 0px 0px 10px 5px #ffb811b9;
+                    }
+                }
+            }
+        }
+        .adminFunction{
+            display: flex;
+            justify-content: flex-end;
+            button{
+                background-color: #b8b8b8;
+                padding: .5em;
+                border-radius: 5px;
+                transition: .5s;
+                &:hover{
+                    background-color: var(--primary);
+                }
+                &.inEdition{
+                    background-color: var(--primary);
+                    box-shadow: 0px 0px 10px 5px #ffb811b9;
+                }
+            }
+
         }
     }
 }
