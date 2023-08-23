@@ -5,11 +5,16 @@
             <h1>Perfil</h1>
             <div class="cardProfile">
                 <div class="userInfo">
+                    <img :src="myData.userPhotoUrl" alt="userPhoto" class="userPhoto">
                     <p class="userName">{{ myData.nameStore }} -
                         <span v-if="myData.function === 'store'" class="userFunction">Lojista</span>
                         <span v-else class="userFunction">Cliente</span>
                     </p>
                     <div class="formUserInfoContainer">
+                        <div class="storeBannerContainer">
+                            <p>Banner da loja:</p>
+                            <img :src="myData.storeBannerUrl" alt="storeBanner" class="storeBanner">
+                        </div>
                         <div class="adminFunction">
                             <button @click="handleEditFunction" :class="{ 'inEdition': inEdition }">
                                 <i class="fa-solid fa-pen-to-square"></i>
@@ -17,6 +22,18 @@
                             </button>
                         </div>
                         <form class="formUserInfo" @submit.prevent="saveUserInfo">
+                            <div class="rowForm">
+                                <div class="inputContainer">
+                                    <label for="userPhoto"><i class="fa-solid fa-photo-film"></i> Foto de perfil: </label>
+                                    <input type="file" @change="handleImageUpload" accept="image/*" :disabled="editFunction"
+                                        id="userPhoto">
+                                </div>
+                                <div class="inputContainer">
+                                    <label for="storeBanner"><i class="fa-solid fa-panorama"></i> Banner Loja: </label>
+                                    <input type="file" @change="handleImageUpload" accept="image/*" :disabled="editFunction"
+                                        id="storeBanner">
+                                </div>
+                            </div>
                             <div class="rowForm">
                                 <div class="inputContainer">
                                     <label for="address"><i class="fa-regular fa-map"></i> Endereço:</label>
@@ -32,22 +49,26 @@
                             <div class="rowForm">
                                 <div class="inputContainer">
                                     <label for="instagram"><i class="fa-brands fa-instagram"></i> Instagram:</label>
-                                    <input type="text" :disabled="editFunction" id="instagram" v-model="instagram" placeholder="Seu instagram">
+                                    <input type="text" :disabled="editFunction" id="instagram" v-model="instagram"
+                                        placeholder="Seu instagram">
                                 </div>
                                 <div class="inputContainer">
                                     <label for="facebook"><i class="fa-brands fa-facebook"></i> Facebook:</label>
-                                    <input type="text" :disabled="editFunction" id="facebook" v-model="facebook" placeholder="Seu facebook">
+                                    <input type="text" :disabled="editFunction" id="facebook" v-model="facebook"
+                                        placeholder="Seu facebook">
                                 </div>
                             </div>
                             <div class="rowForm">
                                 <div class="inputContainer">
-                                    <label for="storeDescription"><i class="fa-regular fa-message"></i> Descrição da loja:</label>
+                                    <label for="storeDescription"><i class="fa-regular fa-message"></i> Descrição da
+                                        loja:</label>
                                     <textarea :disabled="editFunction" v-model="storeDescription" name="storeDescription"
                                         id="storeDescription" placeholder="Sua descrição"></textarea>
                                 </div>
                             </div>
                             <div class="submitBtnContainer">
-                                <button :disabled="editFunction" class="submitBtn" type="submit">Salvar modificações</button>
+                                <button :disabled="editFunction" class="submitBtn" type="submit">Salvar
+                                    modificações</button>
                             </div>
                         </form>
                     </div>
@@ -61,8 +82,8 @@
 import { getAuth } from 'firebase/auth';
 import { ref } from 'vue';
 import { getDatabase, ref as dbRef, get, update } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import { useRoute } from 'vue-router';
-import Toggle from '@vueform/toggle';
 import Message from '../components/Message.vue';
 export default {
     name: 'Profile',
@@ -71,7 +92,6 @@ export default {
         }
     },
     components: {
-        Toggle,
         Message
     },
     setup(props) {
@@ -86,15 +106,16 @@ export default {
         const phone = ref(null);
         const facebook = ref(null);
         const instagram = ref(null);
+        const comboRef = ref(null); // Declarada no escopo do setup
+        const imageUrls = ref([]);
 
         const auth = getAuth();
         const user = auth.currentUser;
 
-
         if (user && user.uid) {
             const db = getDatabase();
-            const comboRef = dbRef(db, `users/${route.params.id}`);
-            get(comboRef)
+            comboRef.value = dbRef(db, `users/${route.params.id}`);
+            get(comboRef.value) // Use comboRef.value aqui
                 .then((snapshot) => {
                     if (snapshot.exists()) {
                         myData.value = snapshot.val();
@@ -105,12 +126,12 @@ export default {
                 .catch((error) => {
                     console.log('Erro ao obter os dados:', error);
                 });
-        };
+        }
 
         if (user && user.uid) {
             const db = getDatabase();
-            const comboRef = dbRef(db, `users/${user.uid}`);
-            get(comboRef)
+            comboRef.value = dbRef(db, `users/${user.uid}`);
+            get(comboRef.value) // Use comboRef.value aqui
                 .then((snapshot) => {
                     if (snapshot.exists()) {
                         myData.value = snapshot.val();
@@ -130,6 +151,47 @@ export default {
                 });
         }
 
+        const handleImageUpload = async (event) => {
+            const imageFile = event.target.files[0];
+            if (!imageFile) return;
+
+            try {
+                const storage = getStorage();
+                const inputId = event.target.id;
+
+                const storageRefUser = storageRef(
+                    storage,
+                    `${user.uid}/${inputId}`
+                );
+
+                const uploadTask = await uploadBytes(storageRefUser, imageFile);
+                const downloadURL = await getDownloadURL(uploadTask.ref);
+
+                const db = getDatabase();
+                if (inputId === 'userPhoto') {
+                    myData.value.userPhotoUrl = downloadURL; // Salvar a URL da imagem em myData
+                    await update(comboRef.value, { userPhotoUrl: downloadURL });
+                } else if (inputId === 'storeBanner') {
+                    myData.value.storeBannerUrl = downloadURL; // Salvar a URL da imagem em myData
+                    await update(comboRef.value, { storeBannerUrl: downloadURL });
+                }
+
+                // Adicionar a URL da imagem ao array imageUrls
+                imageUrls.value.push(downloadURL);
+
+                msg.value = 'Imagem carregada com sucesso';
+                tipo.value = 'success';
+                setTimeout(() => {
+                    msg.value = '';
+                }, 3000);
+            } catch (error) {
+                console.error('Erro ao carregar a imagem:', error);
+                msg.value = 'Erro ao carregar a imagem';
+                tipo.value = 'error';
+            }
+        };
+
+
         const saveUserInfo = async () => {
             const db = getDatabase();
             const comboRef = dbRef(db, `users/${user.uid}`);
@@ -139,7 +201,7 @@ export default {
                 phone: phone.value,
                 storeDescription: storeDescription.value,
                 facebook: facebook.value,
-                instagram: instagram.value
+                instagram: instagram.value,
             };
 
             try {
@@ -154,6 +216,7 @@ export default {
                 console.error('Erro ao salvar os dados:', error);
             }
         };
+
 
         const handleEditFunction = () => {
             editFunction.value = !editFunction.value;
@@ -171,14 +234,16 @@ export default {
             address,
             facebook,
             instagram,
+            comboRef,
+            imageUrls,
             saveUserInfo,
-            handleEditFunction
+            handleEditFunction,
+            handleImageUpload,
         };
     },
 }
 
 </script>
-<style src="@vueform/toggle/themes/default.css"></style>    
 <style lang="scss" scoped>
 .cardProfile {
     padding: 1em;
@@ -190,21 +255,44 @@ export default {
     background-repeat: no-repeat;
     background-position-y: 21em;
     padding-bottom: 2em;
-    .userInfo{
-        .userName{
+
+    .userInfo {
+        .userPhoto{
+            width: 100px;
+            height: auto;
+            border-radius: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+        .userName {
             font-size: 26px;
             text-align: center;
             border-bottom: solid 3px #c0c0c084;
             line-height: 3em;
             margin-bottom: 30px;
-            span{
+
+            span {
                 background-color: #fff;
                 padding-inline: .2em;
                 border-radius: 5px;
             }
         }
     }
+
     .formUserInfoContainer {
+        .storeBannerContainer{
+            margin-bottom:2em;
+            padding-bottom: 2em;
+            border-bottom: solid 3px #c0c0c084;
+            p{
+                font-size: 20px;
+                font-weight: bold;
+            }
+            .storeBanner{
+                border-radius: 20px;
+                width: 100%;
+            }
+        }
         .formUserInfo {
             .rowForm {
                 display: flex;
@@ -256,36 +344,43 @@ export default {
                     }
                 }
             }
-            .submitBtnContainer{
-                .submitBtn{
+
+            .submitBtnContainer {
+                .submitBtn {
                     background-color: var(--primary);
                     padding: .5em;
                     border-radius: 5px;
                     margin-inline: .5em;
                     margin-top: 10px;
                     transition: .5s;
-                    &:disabled{
+
+                    &:disabled {
                         filter: saturate(50%);
                         cursor: default;
                     }
-                    &:hover{
+
+                    &:hover {
                         box-shadow: 0px 0px 10px 5px #ffb811b9;
                     }
                 }
             }
         }
-        .adminFunction{
+
+        .adminFunction {
             display: flex;
             justify-content: flex-end;
-            button{
+
+            button {
                 background-color: #b8b8b8;
                 padding: .5em;
                 border-radius: 5px;
                 transition: .5s;
-                &:hover{
+
+                &:hover {
                     background-color: var(--primary);
                 }
-                &.inEdition{
+
+                &.inEdition {
                     background-color: var(--primary);
                     box-shadow: 0px 0px 10px 5px #ffb811b9;
                 }

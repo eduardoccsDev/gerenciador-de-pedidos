@@ -10,9 +10,7 @@
   <Sidebar />
   <div class="pageContent">
     <router-view v-slot="{ Component }">
-      <transition name="grow-in" mode="out-in">
         <Component :is="Component" />
-      </transition>
     </router-view>
     <Footer />
   </div>
