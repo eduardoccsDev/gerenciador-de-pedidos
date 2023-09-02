@@ -23,6 +23,14 @@
                     Perfil
                 </span>
             </router-link>
+            <router-link v-if="isLoggedIn" to="/restaurantes" class="buttonLink">
+                <span class="icons">
+                    <i class="fa-solid fa-utensils"></i>
+                </span>
+                <span class="text">
+                    Restaurantes
+                </span>
+            </router-link>
             <router-link  v-if="isLoggedIn" to="/dashboard" class="buttonLink">
                 <span class="icons">
                     <i class="fa-solid fa-house"></i>

@@ -97,6 +97,13 @@ const routes = [
     meta: {
       requiresAuth: true,
     }
+  },
+  {
+    path: '/restaurantes',
+    component: () => import('../views/Lojas.vue'),
+    meta: {
+      requiresAuth: true,
+    }
   }
 ]
 

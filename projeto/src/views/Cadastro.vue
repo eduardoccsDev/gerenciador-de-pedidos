@@ -124,6 +124,7 @@ const registerUserInDatabase = (user, userFunction, nameStore) => {
         uid: uid,
         uemail: uemail,
         function: userFunction,
+        userPhotoUrl: ''
         // Outros dados possíveis
     };
 
