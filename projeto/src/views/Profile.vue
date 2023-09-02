@@ -33,6 +33,16 @@
                                     <input type="file" @change="handleImageUpload" accept="image/*" :disabled="editFunction"
                                         id="storeBanner">
                                 </div>
+                                <div class="inputContainer">
+                                    <label for="storeCategory"><i class="fa-solid fa-spell-check"></i> Categoria da loja:</label>
+                                    <select id="storeCategory" name="storeCategory" required v-model="storeCategory"
+                                        :disabled="editFunction">
+                                        <option value="" selected disabled>Selecione a categoria</option>
+                                        <option v-for="(item, index) in storesCategories" :key="index" :value="item">
+                                            {{ item }}
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="rowForm">
                                 <div class="inputContainer">
@@ -105,9 +115,11 @@ export default {
         const address = ref(null);
         const phone = ref(null);
         const facebook = ref(null);
+        const storeCategory = ref(null);
         const instagram = ref(null);
         const comboRef = ref(null); // Declarada no escopo do setup
         const imageUrls = ref([]);
+        const storesCategories = ref({});
 
         const auth = getAuth();
         const user = auth.currentUser;
@@ -121,6 +133,23 @@ export default {
                         myData.value = snapshot.val();
                     } else {
                         console.log('Usuário não encontrado');
+                    }
+                })
+                .catch((error) => {
+                    console.log('Erro ao obter os dados:', error);
+                });
+        }
+        if (user && user.uid) {
+            const db = getDatabase();
+            const comboRef = dbRef(db, 'storesCategories');
+
+            get(comboRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        // Converta o valor do snapshot para um objeto JavaScript
+                        storesCategories.value = snapshot.val();
+                    } else {
+                        console.log('Categorias não encontradas');
                     }
                 })
                 .catch((error) => {
@@ -142,6 +171,7 @@ export default {
                         storeDescription.value = myData.value.storeDescription;
                         facebook.value = myData.value.facebook;
                         instagram.value = myData.value.instagram;
+                        storeCategory.value = myData.value.storeCategory
                     } else {
                         console.log('Usuário não encontrado');
                     }
@@ -202,6 +232,7 @@ export default {
                 storeDescription: storeDescription.value,
                 facebook: facebook.value,
                 instagram: instagram.value,
+                storeCategory: storeCategory.value,
             };
 
             try {
@@ -230,9 +261,11 @@ export default {
             editFunction,
             inEdition,
             storeDescription,
+            storesCategories,
             phone,
             address,
             facebook,
+            storeCategory,
             instagram,
             comboRef,
             imageUrls,
@@ -257,13 +290,14 @@ export default {
     padding-bottom: 2em;
 
     .userInfo {
-        .userPhoto{
+        .userPhoto {
             width: 100px;
             height: auto;
             border-radius: 100%;
             display: block;
             margin: 0 auto;
         }
+
         .userName {
             font-size: 26px;
             text-align: center;
@@ -280,19 +314,22 @@ export default {
     }
 
     .formUserInfoContainer {
-        .storeBannerContainer{
-            margin-bottom:2em;
+        .storeBannerContainer {
+            margin-bottom: 2em;
             padding-bottom: 2em;
             border-bottom: solid 3px #c0c0c084;
-            p{
+
+            p {
                 font-size: 20px;
                 font-weight: bold;
             }
-            .storeBanner{
+
+            .storeBanner {
                 border-radius: 20px;
                 width: 100%;
             }
         }
+
         .formUserInfo {
             .rowForm {
                 display: flex;
